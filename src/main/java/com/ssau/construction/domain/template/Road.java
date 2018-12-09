@@ -8,7 +8,7 @@ public class Road extends FunctionalBlock {
     public Road (GraphicsContext graphicsContext){ super(graphicsContext);}
 
     public void render(double x, double y, int size) {
-        String imagePath = "road.jpg";
+        String imagePath = "pictures/road.jpg";
         Image image = new Image(imagePath);
         graphicsContext.drawImage(image, x, y, size, size);
     }

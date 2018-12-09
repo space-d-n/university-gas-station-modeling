@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.io.File;
 import java.io.Serializable;
 
 public class GasStation implements Serializable {
@@ -61,6 +62,8 @@ public class GasStation implements Serializable {
 
     private int functionalBlockH;
     private int functionalBlockV;
+    private int serviceBlockH;
+    private int serviceBlockV;
     private final double HORIZONTAL_MARGIN;
     private final double VERTICAL_MARGIN;
     private final double HIGHWAY_SIZE;
@@ -77,23 +80,25 @@ public class GasStation implements Serializable {
         return functionalBlockV;
     }
 
-    public GasStation(int functionalBlockH, int functionalBlockV, GraphicsContext graphicsContext, int size) {
-        gasStation = new FunctionalBlock[functionalBlockH][functionalBlockV];
+    public GasStation(int functionalBlockH, int functionalBlockV, int serviceBlockH, int serviceBlockV, GraphicsContext graphicsContext, int size) {
+        gasStation = new FunctionalBlock[functionalBlockH + serviceBlockH][functionalBlockV];
         this.graphicsContext = graphicsContext;
         this.size = size;
         this.functionalBlockH = functionalBlockH;
         this.functionalBlockV = functionalBlockV;
+        this.serviceBlockH = serviceBlockH;
+        this.serviceBlockV = serviceBlockV;
         HIGHWAY_SIZE = 2 * size;
         HORIZONTAL_MARGIN = graphicsContext.getCanvas().getWidth() / 2 - functionalBlockH * size / 2;
         VERTICAL_MARGIN = graphicsContext.getCanvas().getHeight() / 2 - functionalBlockV * size / 2 - HIGHWAY_SIZE / 2;
-        for (int i = 0; i < functionalBlockH; i++)
+        for (int i = 0; i < functionalBlockH + serviceBlockH; i++)
             for (int j = 0; j < functionalBlockV; j++) {
                 gasStation[i][j] = new Road(graphicsContext);
             }
     }
 
-    public GasStation(int functionalBlockH, int functionalBlockV, GraphicsContext graphicsContext, int size, GasStation oldGasStation) {
-        this(functionalBlockH, functionalBlockV, graphicsContext, size);
+    public GasStation(int functionalBlockH, int functionalBlockV, int serviceBlockN, int serviceBlockV, GraphicsContext graphicsContext, int size, GasStation oldGasStation) {
+        this(functionalBlockH, functionalBlockV, serviceBlockN, serviceBlockN, graphicsContext, size);
         int minH = (functionalBlockH > oldGasStation.functionalBlockH) ? oldGasStation.functionalBlockH : functionalBlockH;
         int minV = (functionalBlockV > oldGasStation.functionalBlockV) ? oldGasStation.functionalBlockV : functionalBlockV;
         for (int i = 0; i < minH; i++)
@@ -133,7 +138,7 @@ public class GasStation implements Serializable {
 
     //Отрисовка разметки
     public void drawMarkup() {
-        for (int i = 0; i <= functionalBlockH; i++) {
+        for (int i = 0; i <= functionalBlockH + serviceBlockH; i++) {
             graphicsContext.strokeLine(
                     HORIZONTAL_MARGIN + i * size, VERTICAL_MARGIN, HORIZONTAL_MARGIN + i * size,
                     VERTICAL_MARGIN + functionalBlockV * size);
@@ -228,7 +233,7 @@ public class GasStation implements Serializable {
     }
 
     public void drawFunctionalBlocks() {
-        for (int i = 0; i < functionalBlockH; i++)
+        for (int i = 0; i < functionalBlockH + serviceBlockH; i++)
             for (int j = 0; j < functionalBlockV; j++)
                 if (gasStation[i][j] != null) {
                     graphicsContext.clearRect(HORIZONTAL_MARGIN + i * size + 1, VERTICAL_MARGIN + j * size + 1, size - 2, size - 2);
@@ -237,8 +242,8 @@ public class GasStation implements Serializable {
     }
 
     public void drawFunctionalBlocksInModeling() {
-        for (int i = 0; i < functionalBlockH; i++)
-            for (int j = 0; j < functionalBlockV; j++)
+        for (int i = 0; i < functionalBlockH + serviceBlockH; i++)
+            for (int j = 0; j < functionalBlockV + serviceBlockV; j++)
                 if (gasStation[i][j] != null) {
                     gasStation[i][j].render(HORIZONTAL_MARGIN + i * size, VERTICAL_MARGIN + j * size, size);
                 }
@@ -246,7 +251,7 @@ public class GasStation implements Serializable {
 
     //Отрисовка шоссе
     public void drawHighway() {
-        String imagePath = "highway_road.jpg";
+        String imagePath = "pictures/highway_road.jpg";
         Image image = new Image(imagePath);
         for (int i = 0; i < graphicsContext.getCanvas().getWidth() / HIGHWAY_SIZE; i++) {
             graphicsContext.drawImage(image, 2 * i * size, VERTICAL_MARGIN + functionalBlockV * size + 1, HIGHWAY_SIZE, HIGHWAY_SIZE);
@@ -254,7 +259,7 @@ public class GasStation implements Serializable {
     }
 
     public void drawHighwayInModeling() {
-        String imagePath = "highway_road.jpg";
+        String imagePath = "pictures/highway_road.jpg";
         Image image = new Image(imagePath);
         for (int i = 0; i < entryI + HORIZONTAL_MARGIN / size; i++) {
             graphicsContext.drawImage(image, i * size, VERTICAL_MARGIN + functionalBlockV * size, size, HIGHWAY_SIZE);
@@ -281,17 +286,17 @@ public class GasStation implements Serializable {
     }
 
     public void drawBackground() {
-        String imagePath = "tree.png";
+        String imagePath = "pictures/tree.png";
         Image image = new Image(imagePath);
-        String imagePath2 = "lawn2.png";
-        Image image2 = new Image(imagePath2);
+        imagePath = "pictures/lawn2.png";
+        Image image2 = new Image(imagePath);
         for (int i = 0; i < graphicsContext.getCanvas().getWidth() / size; i++) {
             for (int j = 0; j < graphicsContext.getCanvas().getHeight() / size; j++) {
                 graphicsContext.drawImage(image2, i * size, j * size, size, size);
                 //graphicsContext.drawImage(image,i*size, j*size,size,size);
             }
         }
-        for (int i = -1; i < 1 + functionalBlockH; i++) {
+        for (int i = -1; i < 1 + functionalBlockH + serviceBlockH; i++) {
             graphicsContext.drawImage(image, HORIZONTAL_MARGIN + i * size, VERTICAL_MARGIN - size, size, size);
         }
         for (int i = 0; i < functionalBlockV; i++) {

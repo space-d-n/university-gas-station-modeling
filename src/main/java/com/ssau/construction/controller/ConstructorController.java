@@ -100,7 +100,7 @@ public class ConstructorController {
         size = 50;
         Canvas canvas = new Canvas(819, 587);
         graphicsContextConstructor = canvas.getGraphicsContext2D();
-        constructorGasStation = new GasStation(4, 4, graphicsContextConstructor, size);
+        constructorGasStation = new GasStation(4, 4,4,4, graphicsContextConstructor, size);
 
         canvas.setOnMouseClicked(event -> {
                     if (template != Template.Null) {

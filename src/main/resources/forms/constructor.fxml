@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="746.0" prefWidth="1084.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ssau.construction.controller.ConstructorController">
+    <children>
+        <BorderPane fx:id="borderPane" layoutX="139.0" layoutY="70.0" prefHeight="681.0" prefWidth="957.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <top>
+                <MenuBar BorderPane.alignment="CENTER">
+                    <menus>
+                        <Menu fx:id="fileMenu" mnemonicParsing="false" onShowing="#checkFileMenu" text="Файл">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#onMenuSave" text="Сохранить" />
+                                <MenuItem mnemonicParsing="false" onAction="#onSave" text="Сохранить как" />
+                                <MenuItem mnemonicParsing="false" onAction="#onConstructorLoad" text="Загрузить" />
+                                <MenuItem mnemonicParsing="false" text="Загрузить" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Справка">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#onProjectClick" text="О системе" />
+                                <MenuItem mnemonicParsing="false" onAction="#onAuthorsClick" text="Об авторах" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </top>
+            <center>
+                <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                    <tabs>
+                        <Tab onSelectionChanged="#showConstructorMenuItems" text="Конструирование">
+                            <content>
+                                <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                    <left>
+                                        <GridPane alignment="TOP_CENTER" prefHeight="650.0" prefWidth="83.0" BorderPane.alignment="CENTER">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <ImageView fx:id="imageViewRoad" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseRoad" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                    <image>
+                                                        <Image url="@../pictures/road.jpg" />
+                                                    </image>
+                                                </ImageView>
+                                                <ImageView fx:id="imageViewParkingPlace" fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                    <image>
+                                                        <Image url="@../pictures/parking_place.png" />
+                                                    </image>
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                </ImageView>
+                                                <ImageView fx:id="imageViewEntry" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseEntry" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                    <image>
+                                                        <Image url="@../pictures/entry.png" />
+                                                    </image>
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                </ImageView>
+                                                <ImageView fx:id="imageViewDeparture" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseDeparture" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                    <image>
+                                                        <Image url="@../pictures/departure.png" />
+                                                    </image>
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                </ImageView>
+                                                <ImageView fx:id="imageViewCashBox" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseCashBox" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                    <image>
+                                                        <Image url="@../pictures/cashBox.png" />
+                                                    </image>
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                </ImageView>
+                                                <ImageView fx:id="imageViewInfoTable" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseInfoTable" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="5">
+                                                    <image>
+                                                        <Image url="@../pictures/infoTable.png" />
+                                                    </image>
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                </ImageView>
+                                                <ImageView fx:id="imageViewLawn" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseLawn" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="6">
+                                                    <image>
+                                                        <Image url="@../pictures/lawn.jpg" />
+                                                    </image>
+                                                    <GridPane.margin>
+                                                        <Insets left="5.0" right="5.0" />
+                                                    </GridPane.margin>
+                                                </ImageView>
+                                            </children>
+                                        </GridPane>
+                                    </left>
+                                    <center>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                            <top>
+                                                <GridPane maxWidth="250.0" prefHeight="50.0" prefWidth="250.0" BorderPane.alignment="TOP_LEFT">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="77.0" minWidth="10.0" percentWidth="20.0" prefWidth="50.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="67.0" minWidth="10.0" percentWidth="20.0" prefWidth="52.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="20.0" prefWidth="50.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <BorderPane.margin>
+                                                        <Insets left="5.0" />
+                                                    </BorderPane.margin>
+                                                    <children>
+                                                        <ImageView fitHeight="51.0" fitWidth="51.0" onMouseClicked="#onSave" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+                                                            <image>
+                                                                <Image url="@../pictures/settings_icon2.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fitHeight="50.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                                            <image>
+                                                                <Image url="@../pictures/setting_icon.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fitHeight="47.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                                                            <image>
+                                                                <Image url="@../pictures/submit_icon2.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fitHeight="60.0" fitWidth="48.0" nodeOrientation="RIGHT_TO_LEFT" onMouseClicked="#onConstructorLoad" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="RIGHT">
+                                                            <image>
+                                                                <Image url="@../pictures/load_icon2.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fx:id="go_button" fitHeight="51.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
+                                                            <image>
+                                                                <Image url="@../pictures/goto_icon2.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </children>
+                                                </GridPane>
+                                            </top>
+                                            <center>
+                                                <Pane fx:id="constructor" BorderPane.alignment="CENTER">
+                                                    <BorderPane.margin>
+                                                        <Insets />
+                                                    </BorderPane.margin></Pane>
+                                            </center>
+                                        </BorderPane>
+                                    </center>
+                                </BorderPane>
+                            </content>
+                        </Tab>
+                        <Tab onSelectionChanged="#showModelingMenuItems" text="Моделирование">
+                            <content>
+                                <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                    <center>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                            <center>
+                                                <Pane fx:id="modeling" BorderPane.alignment="CENTER" />
+                                            </center>
+                                            <top>
+                                                <GridPane maxWidth="450.0" prefHeight="50.0" prefWidth="450.0" BorderPane.alignment="TOP_LEFT">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="52.0" minWidth="0.0" percentWidth="25.0" prefWidth="51.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="0.0" percentWidth="25.0" prefWidth="46.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="0.0" percentWidth="25.0" prefWidth="42.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="0.0" percentWidth="25.0" prefWidth="105.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="50.0" prefWidth="105.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <BorderPane.margin>
+                                                        <Insets left="5.0" />
+                                                    </BorderPane.margin>
+                                                    <children>
+                                                        <ImageView fx:id="load_button" fitHeight="55.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../pictures/load_icon2.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fitHeight="49.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                                                            <image>
+                                                                <Image url="@../pictures/parking_settings_icon.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fitHeight="47.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                                                            <image>
+                                                                <Image url="@../pictures/trafic_settings.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
+                                                            <image>
+                                                                <Image url="@../pictures/play_icon_disabled.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fx:id="pause_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
+                                                            <image>
+                                                                <Image url="@../pictures/pause_icon_disabled.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fx:id="stop_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5">
+                                                            <image>
+                                                                <Image url="@../pictures/stop_icon_disabled.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <ImageView fx:id="table_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6">
+                                                            <image>
+                                                                <Image url="@../pictures/table_icon_disabled.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                        <Canvas fx:id="modelTimeCanvas" height="54.0" width="101.0" GridPane.columnIndex="7" />
+                                                    </children>
+                                                </GridPane>
+                                            </top>
+                                        </BorderPane>
+                                    </center>
+                                </BorderPane>
+                            </content></Tab>
+                    </tabs>
+                </TabPane>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>
