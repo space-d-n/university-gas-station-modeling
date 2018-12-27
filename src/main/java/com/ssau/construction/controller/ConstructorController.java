@@ -954,7 +954,8 @@ public class ConstructorController {
                         pathNext.getElements().add(new MoveTo(FUNK_plus_BETWEEN + serviceAreaGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
                                 modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
 
-                        if (random.nextDouble() < probability && serviceAreaGraph.hasFreeGasolineTanks()) {
+                        if (random.nextDouble() < probability && serviceAreaGraph.hasFreeGasolineTanks()
+                                && getPetrolAmountTotal() < 500) {
 
 
                             //Поворот на парковку
@@ -1013,6 +1014,13 @@ public class ConstructorController {
 
                                     pathToDeparture.getElements().add(new MoveTo(FUNK_plus_BETWEEN + car_car_car.getGasolineTankNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
                                             car_car_car.getGasolineTankNode().getJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+
+                                    setPetrolAmountTotal(getPetrolAmountTotal() + 100);
+                                    graphicsContextModeling.setFill(Paint.valueOf("#ffcc66"));
+                                    graphicsContextModeling.fillRect(0, 0, 200, 75);
+                                    graphicsContextModeling.setFill(Paint.valueOf("#000000"));
+                                    graphicsContextModeling.fillText("Топливо (л): " + getPetrolAmountTotal(), 25, 25);
+                                    graphicsContextModeling.fillText("Деньги (у.е.): " + getMoneyAmount(), 25, 50);
 
                                     //Путь от парковочного места до выезда
 
