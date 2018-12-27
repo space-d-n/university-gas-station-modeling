@@ -449,15 +449,15 @@ public class GasStation implements Serializable {
         graphicsContext.drawImage(image, gasStationEntryI * size + HORIZONTAL_MARGIN, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
         graphicsContext.drawImage(image, gasStationDepartureI * size + HORIZONTAL_MARGIN, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
 
-        graphicsContext.clearRect(functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaEntryI * size + 1,
-                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size - 1, HIGHWAY_SIZE);
+//        graphicsContext.clearRect(functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaEntryI * size + 1,
+//                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size - 1, HIGHWAY_SIZE);
 
         graphicsContext.drawImage(image, functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaEntryI * size,
                 SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size + 1, HIGHWAY_SIZE);
 
 
-        graphicsContext.clearRect(functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaDepartureI * size + 1,
-                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size - 1, HIGHWAY_SIZE);
+//        graphicsContext.clearRect(functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaDepartureI * size + 1,
+//                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size - 1, HIGHWAY_SIZE);
 
         graphicsContext.drawImage(image, functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaDepartureI * size,
                 SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size + 1, HIGHWAY_SIZE);
@@ -519,13 +519,13 @@ public class GasStation implements Serializable {
         for (int j = 0, number = 1; j < functionalBlockV; j++)
             for (int i = 0; i < functionalBlockH; i++) {
                 if (gasStation[i][j] instanceof GasolinePump) {
-                    graphicsContext.setFill(Color.web("#e59711"));
-                    graphicsContext.setFont(Font.font("Arial", size / 2));
+                    graphicsContext.setFill(Color.web("#000000"));
+                    graphicsContext.setFont(Font.font("Arial", size / 3));
                     ((GasolinePump) gasStation[i][j]).setNumber(number);
                     if (number < 10) {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688 + 3, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6 + 2);
                     } else {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5 + 3, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6 + 2);
                     }
 
                     graphicsContext.setFill(Color.BLACK);
@@ -536,16 +536,16 @@ public class GasStation implements Serializable {
 
     //Отрисовка номеров бензоколонок
     public void drawGasolineTankNumbers() {
-        for (int j = 0, number = 1; j < functionalBlockV; j++)
-            for (int i = 0; i < functionalBlockH; i++) {
-                if (gasStation[i][j] instanceof GasolineTank) {
-                    graphicsContext.setFill(Color.web("#e59711"));
-                    graphicsContext.setFont(Font.font("Arial", size / 2));
-                    ((GasolineTank) gasStation[i][j]).setNumber(number);
+        for (int j = 0, number = 1; j < serviceBlockH; j++)
+            for (int i = 0; i < serviceBlockV; i++) {
+                if (serviceArea[i][j] instanceof GasolineTank) {
+                    graphicsContext.setFill(Color.web("#000000"));
+                    graphicsContext.setFont(Font.font("Arial", size / 3));
+                    ((GasolineTank) serviceArea[i][j]).setNumber(number);
                     if (number < 10) {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + functionalBlockH * size + size / 2 - size / 6.998138688 + 3, j * size + SERVICE_AREA_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
                     } else {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + functionalBlockH * size + size / 2 - size / 3.5 + 3, j * size + SERVICE_AREA_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
                     }
 
                     graphicsContext.setFill(Color.BLACK);

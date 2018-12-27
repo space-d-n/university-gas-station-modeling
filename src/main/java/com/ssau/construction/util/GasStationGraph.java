@@ -190,7 +190,7 @@ public class GasStationGraph implements Iterable<Node> {
     private PriorityQueue<GasolinePumpNode> freeGasolinePumps = new PriorityQueue<>();
 
 
-    public GasolinePumpNode getFreeParkingPlace() {
+    public GasolinePumpNode getFreeGasolinePump() {
 
         if (freeGasolinePumps.size() > 0) {
             return freeGasolinePumps.remove();

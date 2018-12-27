@@ -216,7 +216,7 @@
                                                                 <Image url="@../pictures/trafic_settings.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" onMouseClicked="#onStartModeling" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
                                                             <image>
                                                                 <Image url="@../pictures/play_icon_disabled.png" />
                                                             </image>
