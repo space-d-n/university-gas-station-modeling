@@ -13,7 +13,7 @@ public class Passenger extends Car {
     private static Random random = new Random();
 
     static {
-        cars.addAll(Arrays.asList("pictures/car1.png"));
+        cars.addAll(Arrays.asList("pictures/passenger1.png", "pictures/passenger2.png", "pictures/passenger3.png"));
     }
 
     public Passenger(double x, double y) {

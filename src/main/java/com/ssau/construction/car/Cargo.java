@@ -14,7 +14,7 @@ public class Cargo extends Car {
     private static ArrayList<String> cars = new ArrayList<>();
 
     static {
-        cars.addAll(Arrays.asList("pictures/car2.png"));
+        cars.addAll(Arrays.asList("pictures/cargo1.png"));
     }
 
     public Cargo(double x, double y) {

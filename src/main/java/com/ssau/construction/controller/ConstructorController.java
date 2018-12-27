@@ -38,6 +38,8 @@ import java.util.Random;
 
 public class ConstructorController {
 
+    public static final int DISTANCE_BETWEEN = 50;
+
     //Общие параметры
     @FXML
     TabPane tabPane;
@@ -164,7 +166,7 @@ public class ConstructorController {
     //    Параметры для modeling
     private GasStation modelingGasStation;
     private double probability = 1;
-    private double passengerPercent = 0.5;
+    private double passengerPercent = 0.8;
     private IntervalGetter intervalGetter = new DeterminateIntervalGetter(1);
     private IntervalGetter reverseIntervalGetter = new DeterminateIntervalGetter(1);
     private IntervalGetter intervalGetterParking = new DeterminateIntervalGetter(1);
@@ -732,102 +734,103 @@ public class ConstructorController {
                 transitions.add(pathTransition);
 
 
-                //Путь от начала шоссе до въезда
-                path.getElements().add(new LineTo(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
-                        modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
-
-                pathTransition.setOnFinished(event -> {
-                    PathTransition pathTransitionToEntry = (PathTransition) event.getSource();
-                    Car car2 = (Car) pathTransitionToEntry.getNode();
-                    PathTransition pathNextTransition = new PathTransition();
-                    transitions.remove(pathTransitionToEntry);
-                    transitions.add(pathNextTransition);
-                    Path pathNext = new Path();
-                    pathNext.getElements().add(new MoveTo(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
+                if (car instanceof Passenger) {
+                    //Путь от начала шоссе до въезда
+                    path.getElements().add(new LineTo(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
                             modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
 
-                    if (random.nextDouble() < probability && gasStationGraph.hasFreeParkingPlaces()) {
+                    pathTransition.setOnFinished(event -> {
+                        PathTransition pathTransitionToEntry = (PathTransition) event.getSource();
+                        Car car2 = (Car) pathTransitionToEntry.getNode();
+                        PathTransition pathNextTransition = new PathTransition();
+                        transitions.remove(pathTransitionToEntry);
+                        transitions.add(pathNextTransition);
+                        Path pathNext = new Path();
+                        pathNext.getElements().add(new MoveTo(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
+                                modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
+
+                        if (random.nextDouble() < probability && gasStationGraph.hasFreeGasolinePumps()) {
 
 
-                        //Поворот на парковку
+                            //Поворот на парковку
 
-                        CubicCurveTo cubicTo = new CubicCurveTo();
-                        cubicTo.setControlX1(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN());
-                        cubicTo.setControlY1(modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25);
-                        cubicTo.setControlX2(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25);
-                        cubicTo.setControlY2(modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 15);
-                        cubicTo.setX(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25);
-                        cubicTo.setY(modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size - 25);
-                        pathNext.getElements().add(cubicTo);
+                            CubicCurveTo cubicTo = new CubicCurveTo();
+                            cubicTo.setControlX1(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN());
+                            cubicTo.setControlY1(modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25);
+                            cubicTo.setControlX2(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25);
+                            cubicTo.setControlY2(modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 15);
+                            cubicTo.setX(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25);
+                            cubicTo.setY(modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size - 25);
+                            pathNext.getElements().add(cubicTo);
                             /*pathNext.getElements().add(new LineTo(gasStationGraph.getEntry().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25,
                                     modelingParking.getVERTICAL_MARGIN() + (modelingParking.getFunctionalBlockV()-1) * size + 25));*/
 
 
-                        // Путь от въезда до парковочного места
+                            // Путь от въезда до парковочного места
 
-                        car2.setGasolinePumpNode(gasStationGraph.getFreeGasolinePump());
-                        modelingGasStation.drawInfoTableInModeling(gasStationGraph.getFreeGasolinePumps().size());
-                        for (Node step : car2.getPathToGasStationEntry()
-                                ) {
-                            pathNext.getElements().add(new LineTo(step.getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
-                                    step.getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
-                        }
+                            car2.setGasolinePumpNode(gasStationGraph.getFreeGasolinePump());
+                            modelingGasStation.drawInfoTableInModeling(gasStationGraph.getFreeGasolinePumps().size());
+                            for (Node step : car2.getPathToGasStationEntry()
+                                    ) {
+                                pathNext.getElements().add(new LineTo(step.getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                        step.getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                            }
 
-                        //Анимация по приезде на парковочное место
-                        pathNextTransition.setOnFinished((event1) -> {
-                            PathTransition pathTransitionToParkingPlace = (PathTransition) event1.getSource();
-                            PathTransition pathTransition1 = new PathTransition();
-                            transitions.remove(pathTransitionToParkingPlace);
-                            transitions.add(pathTransition1);
-                            Car car_car = (Car) pathTransitionToParkingPlace.getNode();
-                            Path emptyPath = new Path();
-                            emptyPath.getElements().add(new MoveTo(car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
-                                    car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
-                            emptyPath.getElements().add(new LineTo(car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
-                                    car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
-                            pathTransition1.setNode(car_car);
-                            pathTransition1.setPath(emptyPath);
-                            pathTransition1.setInterpolator(Interpolator.LINEAR);
-                            pathTransition1.setDuration(Duration.millis(0.1));
+                            //Анимация по приезде на парковочное место
+                            pathNextTransition.setOnFinished((event1) -> {
+                                PathTransition pathTransitionToParkingPlace = (PathTransition) event1.getSource();
+                                PathTransition pathTransition1 = new PathTransition();
+                                transitions.remove(pathTransitionToParkingPlace);
+                                transitions.add(pathTransition1);
+                                Car car_car = (Car) pathTransitionToParkingPlace.getNode();
+                                Path emptyPath = new Path();
+                                emptyPath.getElements().add(new MoveTo(car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                        car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                                emptyPath.getElements().add(new LineTo(car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                        car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                                pathTransition1.setNode(car_car);
+                                pathTransition1.setPath(emptyPath);
+                                pathTransition1.setInterpolator(Interpolator.LINEAR);
+                                pathTransition1.setDuration(Duration.millis(0.1));
 
-                            double parkingTime = intervalGetterParking.getInterval();
-                            pathTransition1.setDelay(Duration.millis(parkingTime * 1000));
-                            car_car.setArrivalTime(modelTime.toString());
+                                double parkingTime = intervalGetterParking.getInterval();
+                                pathTransition1.setDelay(Duration.millis(parkingTime * 1000));
+                                car_car.setArrivalTime(modelTime.toString());
 
-                            intervalGetterParking.generateNext();
-                            pathTransition1.setOnFinished(event2 -> {
-                                PathTransition delay = (PathTransition) event2.getSource();
-                                PathTransition pathTransitionFromParkingPlace = new PathTransition();
-                                transitions.remove(delay);
-                                transitions.add(pathTransitionFromParkingPlace);
-                                Car car_car_car = (Car) delay.getNode();
-                                car_car_car.setDepartureTime(modelTime.toString());
-                                Path pathToDeparture = new Path();
+                                intervalGetterParking.generateNext();
+                                pathTransition1.setOnFinished(event2 -> {
+                                    PathTransition delay = (PathTransition) event2.getSource();
+                                    PathTransition pathTransitionFromParkingPlace = new PathTransition();
+                                    transitions.remove(delay);
+                                    transitions.add(pathTransitionFromParkingPlace);
+                                    Car car_car_car = (Car) delay.getNode();
+                                    car_car_car.setDepartureTime(modelTime.toString());
+                                    Path pathToDeparture = new Path();
 
-                                pathToDeparture.getElements().add(new MoveTo(car_car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
-                                        car_car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                                    pathToDeparture.getElements().add(new MoveTo(car_car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                            car_car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
 
-                                //Путь от парковочного места до выезда
+                                    //Путь от парковочного места до выезда
 
-                                for (Node step : car_car_car.getPathToGasStationDeparture()
-                                        ) {
-                                    pathToDeparture.getElements().add(new LineTo(step.getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
-                                            step.getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
-                                }
+                                    for (Node step : car_car_car.getPathToGasStationDeparture()
+                                            ) {
+                                        pathToDeparture.getElements().add(new LineTo(step.getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                                step.getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                                    }
 
-                                pathTransitionFromParkingPlace.setOnFinished(event3 -> {
-                                    gasStationGraph.freeParkingPlace(car_car_car.getGasolinePumpNode());
-                                    modelingGasStation.drawInfoTableInModeling(gasStationGraph.getFreeGasolinePumps().size());
-                                    PathTransition turn = (PathTransition) event3.getSource();
-                                    Car car1 = (Car) turn.getNode();
-                                    PathTransition pathTransitionToEnd = new PathTransition();
-                                    transitions.remove(turn);
-                                    transitions.add(pathTransitionToEnd);
-                                    Path pathToEnd = new Path();
+                                    pathTransitionFromParkingPlace.setOnFinished(event3 -> {
+                                        gasStationGraph.freeParkingPlace(car_car_car.getGasolinePumpNode());
+                                        modelingGasStation.drawInfoTableInModeling(gasStationGraph.getFreeGasolinePumps().size());
+                                        PathTransition turn = (PathTransition) event3.getSource();
+                                        Car car1 = (Car) turn.getNode();
+                                        PathTransition pathTransitionToEnd = new PathTransition();
+                                        transitions.remove(turn);
+                                        transitions.add(pathTransitionToEnd);
+                                        Path pathToEnd = new Path();
 //        TODO                            statisticController.addRecord(new Record(((ParkingPlace) modelingParking.getParking()[car1.getParkingPlace().getI()][car1.getParkingPlace().getJ()]).getNumber(), car1.getType(), car1.getRate() * parkingTime / 60, car1.getArrivalTime(), car1.getDepartureTime()));
-                                    //Поворот на шоссе
+                                        //Поворот на шоссе
 
-                                    pathToEnd.getElements().add(new MoveTo(modelingGasStation.getGasStationDepartureI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25, modelingGasStation.getGasStationDepartureJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                                        pathToEnd.getElements().add(new MoveTo(modelingGasStation.getGasStationDepartureI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25, modelingGasStation.getGasStationDepartureJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
                                         /*CubicCurveTo cubicTo1 = new CubicCurveTo();
                                         cubicTo1.setControlX1(gasStationGraph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25);
                                         cubicTo1.setControlY1(gasStationGraph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 65);
@@ -835,72 +838,240 @@ public class ConstructorController {
                                         cubicTo1.setControlY2(gasStationGraph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 75);
                                         cubicTo1.setX(gasStationGraph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 75);
                                         cubicTo1.setY(gasStationGraph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 75);*/
-                                    pathToEnd.getElements().add(new LineTo(modelingGasStation.getGasStationDepartureI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25, (modelingGasStation.getGasStationDepartureJ() + 1) * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+                                        pathToEnd.getElements().add(new LineTo(modelingGasStation.getGasStationDepartureI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25, (modelingGasStation.getGasStationDepartureJ() + 1) * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
 
-                                    //Путь до конца
+                                        //Путь до конца
 
-                                    pathToEnd.getElements().add(new LineTo(modeling.getWidth() + 50, modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
+                                        pathToEnd.getElements().add(new LineTo(modeling.getWidth() + 50, modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
 
-                                    pathTransitionToEnd.setDuration(Duration.millis((modelingGasStation.getHORIZONTAL_MARGIN() / size * 500) + (modelingGasStation.getFunctionalBlockH() - gasStationGraph.getDeparture().getI()) * 500 + 500));
-                                    pathTransitionToEnd.setPath(pathToEnd);
-                                    pathTransitionToEnd.setNode(car1);
-                                    pathTransitionToEnd.setPath(pathToEnd);
-                                    pathTransitionToEnd.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                                    pathTransitionToEnd.setInterpolator(Interpolator.LINEAR);
-                                    pathTransitionToEnd.setOnFinished(event4 -> {
-                                        PathTransition pathTransition2 = (PathTransition) event4.getSource();
-                                        transitions.remove(pathTransition2);
-                                        Car car_car_car_car = (Car) pathTransition2.getNode();
-                                        cars.remove(car_car_car_car);
-                                        modeling.getChildren().remove(car_car_car_car);
+                                        pathTransitionToEnd.setDuration(Duration.millis((modelingGasStation.getHORIZONTAL_MARGIN() / size * 500) + (modelingGasStation.getFunctionalBlockH() - gasStationGraph.getDeparture().getI()) * 500 + (modelingGasStation.getServiceBlockH()) * 500 + 500));
+                                        pathTransitionToEnd.setPath(pathToEnd);
+                                        pathTransitionToEnd.setNode(car1);
+                                        pathTransitionToEnd.setPath(pathToEnd);
+                                        pathTransitionToEnd.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                                        pathTransitionToEnd.setInterpolator(Interpolator.LINEAR);
+                                        pathTransitionToEnd.setOnFinished(event4 -> {
+                                            PathTransition pathTransition2 = (PathTransition) event4.getSource();
+                                            transitions.remove(pathTransition2);
+                                            Car car_car_car_car = (Car) pathTransition2.getNode();
+                                            cars.remove(car_car_car_car);
+                                            modeling.getChildren().remove(car_car_car_car);
+                                        });
+                                        pathTransitionToEnd.play();
                                     });
-                                    pathTransitionToEnd.play();
+
+                                    pathTransitionFromParkingPlace.setDuration(Duration.millis(car_car_car.getPathToGasStationDeparture().size() * 500));
+                                    pathTransitionFromParkingPlace.setPath(pathToDeparture);
+                                    pathTransitionFromParkingPlace.setNode(car_car_car);
+                                    pathTransitionFromParkingPlace.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                                    pathTransitionFromParkingPlace.setInterpolator(Interpolator.LINEAR);
+                                    pathTransitionFromParkingPlace.play();
                                 });
 
-                                pathTransitionFromParkingPlace.setDuration(Duration.millis(car_car_car.getPathToGasStationDeparture().size() * 500));
-                                pathTransitionFromParkingPlace.setPath(pathToDeparture);
-                                pathTransitionFromParkingPlace.setNode(car_car_car);
-                                pathTransitionFromParkingPlace.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                                pathTransitionFromParkingPlace.setInterpolator(Interpolator.LINEAR);
-                                pathTransitionFromParkingPlace.play();
+                                pathTransition1.play();
                             });
-
-                            pathTransition1.play();
-                        });
-                        pathNextTransition.setDuration(Duration.millis(car2.getPathToGasStationEntry().size() * 500 + 500));
-                    } else {
-                        pathNext.getElements().add(new LineTo(modeling.getWidth() + 50, modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
-                        pathNextTransition.setOnFinished((event5 -> {
-                            PathTransition pathTransition1 = (PathTransition) event5.getSource();
-                            transitions.remove(pathTransition1);
-                            Car car_car = (Car) pathTransition1.getNode();
-                            cars.remove(car_car);
-                            modeling.getChildren().remove(car_car);
-                        }));
-                        pathNextTransition.setDuration(Duration.millis(modelingGasStation.getHORIZONTAL_MARGIN() / size * 500 + (modelingGasStation.getFunctionalBlockH() + 1 - modelingGasStation.getGasStationEntryI()) * 500));
-                    }
-                    pathNextTransition.setPath(pathNext);
-                    pathNextTransition.setNode(car2);
-                    pathNextTransition.setPath(pathNext);
-                    pathNextTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                    pathNextTransition.setInterpolator(Interpolator.LINEAR);
-                    pathNextTransition.play();
-                });
+                            pathNextTransition.setDuration(Duration.millis(car2.getPathToGasStationEntry().size() * 500 + 500));
+                        } else {
+                            pathNext.getElements().add(new LineTo(modeling.getWidth() + 50, modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
+                            pathNextTransition.setOnFinished((event5 -> {
+                                PathTransition pathTransition1 = (PathTransition) event5.getSource();
+                                transitions.remove(pathTransition1);
+                                Car car_car = (Car) pathTransition1.getNode();
+                                cars.remove(car_car);
+                                modeling.getChildren().remove(car_car);
+                            }));
+                            pathNextTransition.setDuration(Duration.millis(modelingGasStation.getHORIZONTAL_MARGIN() / size * 500 + (modelingGasStation.getFunctionalBlockH() + 1 - modelingGasStation.getGasStationEntryI()) * 500));
+                        }
+                        pathNextTransition.setPath(pathNext);
+                        pathNextTransition.setNode(car2);
+                        pathNextTransition.setPath(pathNext);
+                        pathNextTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                        pathNextTransition.setInterpolator(Interpolator.LINEAR);
+                        pathNextTransition.play();
+                    });
 
 
-                pathTransition.setDuration(Duration.millis(gasStationGraph.getEntry().getI() * 500
-                        + (modelingGasStation.getHORIZONTAL_MARGIN() / size * 500)));
-                pathTransition.setNode(car);
-                pathTransition.setPath(path);
-                pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                pathTransition.setInterpolator(Interpolator.LINEAR);
-                pathTransition.play();
-                intervalGetter.generateNext();
-                lastHighway = now;
+                    pathTransition.setDuration(Duration.millis(gasStationGraph.getEntry().getI() * 500
+                            + (modelingGasStation.getHORIZONTAL_MARGIN() / size * 500)));
+                    pathTransition.setNode(car);
+                    pathTransition.setPath(path);
+                    pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pathTransition.setInterpolator(Interpolator.LINEAR);
+                    pathTransition.play();
+                    intervalGetter.generateNext();
+                    lastHighway = now;
+                }
+                if (car instanceof Cargo) {
+                    double FUNK_plus_BETWEEN = modelingGasStation.getFunctionalBlockH() * size + DISTANCE_BETWEEN;
+
+                    //Путь от начала шоссе до въезда
+                    path.getElements().add(new LineTo(FUNK_plus_BETWEEN + serviceAreaGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
+                            modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + modelingGasStation.getServiceBlockV() * size + 25));
+
+                    pathTransition.setOnFinished(event -> {
+                        PathTransition pathTransitionToEntry = (PathTransition) event.getSource();
+                        Car car2 = (Car) pathTransitionToEntry.getNode();
+                        PathTransition pathNextTransition = new PathTransition();
+                        transitions.remove(pathTransitionToEntry);
+                        transitions.add(pathNextTransition);
+                        Path pathNext = new Path();
+                        pathNext.getElements().add(new MoveTo(FUNK_plus_BETWEEN + serviceAreaGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
+                                modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
+
+                        if (random.nextDouble() < probability && serviceAreaGraph.hasFreeGasolineTanks()) {
+
+
+                            //Поворот на парковку
+
+                            CubicCurveTo cubicTo = new CubicCurveTo();
+                            cubicTo.setControlX1(FUNK_plus_BETWEEN + serviceAreaGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN());
+                            cubicTo.setControlY1(modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + modelingGasStation.getServiceBlockV() * size + 25);
+                            cubicTo.setControlX2(FUNK_plus_BETWEEN + serviceAreaGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25);
+                            cubicTo.setControlY2(modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + modelingGasStation.getServiceBlockV() * size + 15);
+                            cubicTo.setX(FUNK_plus_BETWEEN + serviceAreaGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25);
+                            cubicTo.setY(modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + modelingGasStation.getServiceBlockV() * size - 25);
+                            pathNext.getElements().add(cubicTo);
+                            /*pathNext.getElements().add(new LineTo(gasStationGraph.getEntry().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25,
+                                    modelingParking.getVERTICAL_MARGIN() + (modelingParking.getFunctionalBlockV()-1) * size + 25));*/
+
+
+                            // Путь от въезда до парковочного места
+
+                            car2.setGasolineTankNode(serviceAreaGraph.getFreeGasolineTank());
+                            for (Node step : car2.getPathToServiceAreaEntry()
+                                    ) {
+                                pathNext.getElements().add(new LineTo(FUNK_plus_BETWEEN + step.getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                        step.getJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+                            }
+
+                            //Анимация по приезде на парковочное место
+                            pathNextTransition.setOnFinished((event1) -> {
+                                PathTransition pathTransitionToParkingPlace = (PathTransition) event1.getSource();
+                                PathTransition pathTransition1 = new PathTransition();
+                                transitions.remove(pathTransitionToParkingPlace);
+                                transitions.add(pathTransition1);
+                                Car car_car = (Car) pathTransitionToParkingPlace.getNode();
+                                Path emptyPath = new Path();
+                                emptyPath.getElements().add(new MoveTo(FUNK_plus_BETWEEN + car_car.getGasolineTankNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                        car_car.getGasolineTankNode().getJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+                                emptyPath.getElements().add(new LineTo(FUNK_plus_BETWEEN + car_car.getGasolineTankNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                        car_car.getGasolineTankNode().getJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+                                pathTransition1.setNode(car_car);
+                                pathTransition1.setPath(emptyPath);
+                                pathTransition1.setInterpolator(Interpolator.LINEAR);
+                                pathTransition1.setDuration(Duration.millis(0.1));
+
+                                double parkingTime = intervalGetterParking.getInterval();
+                                pathTransition1.setDelay(Duration.millis(parkingTime * 1000));
+                                car_car.setArrivalTime(modelTime.toString());
+
+                                intervalGetterParking.generateNext();
+                                pathTransition1.setOnFinished(event2 -> {
+                                    PathTransition delay = (PathTransition) event2.getSource();
+                                    PathTransition pathTransitionFromParkingPlace = new PathTransition();
+                                    transitions.remove(delay);
+                                    transitions.add(pathTransitionFromParkingPlace);
+                                    Car car_car_car = (Car) delay.getNode();
+                                    car_car_car.setDepartureTime(modelTime.toString());
+                                    Path pathToDeparture = new Path();
+
+                                    pathToDeparture.getElements().add(new MoveTo(FUNK_plus_BETWEEN + car_car_car.getGasolineTankNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                            car_car_car.getGasolineTankNode().getJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+
+                                    //Путь от парковочного места до выезда
+
+                                    for (Node step : car_car_car.getPathToServiceAreaDeparture()
+                                            ) {
+                                        pathToDeparture.getElements().add(new LineTo(FUNK_plus_BETWEEN + step.getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
+                                                step.getJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+                                    }
+
+                                    pathTransitionFromParkingPlace.setOnFinished(event3 -> {
+                                        serviceAreaGraph.freeParkingPlace(car_car_car.getGasolineTankNode());
+                                        PathTransition turn = (PathTransition) event3.getSource();
+                                        Car car1 = (Car) turn.getNode();
+                                        PathTransition pathTransitionToEnd = new PathTransition();
+                                        transitions.remove(turn);
+                                        transitions.add(pathTransitionToEnd);
+                                        Path pathToEnd = new Path();
+//        TODO                            statisticController.addRecord(new Record(((ParkingPlace) modelingParking.getParking()[car1.getParkingPlace().getI()][car1.getParkingPlace().getJ()]).getNumber(), car1.getType(), car1.getRate() * parkingTime / 60, car1.getArrivalTime(), car1.getDepartureTime()));
+                                        //Поворот на шоссе
+
+                                        pathToEnd.getElements().add(new MoveTo(FUNK_plus_BETWEEN + modelingGasStation.getServiceAreaDepartureI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25, modelingGasStation.getServiceAreaDepartureJ() * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+                                        /*CubicCurveTo cubicTo1 = new CubicCurveTo();
+                                        cubicTo1.setControlX1(gasStationGraph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25);
+                                        cubicTo1.setControlY1(gasStationGraph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 65);
+                                        cubicTo1.setControlX2(gasStationGraph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 35);
+                                        cubicTo1.setControlY2(gasStationGraph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 75);
+                                        cubicTo1.setX(gasStationGraph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 75);
+                                        cubicTo1.setY(gasStationGraph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 75);*/
+                                        pathToEnd.getElements().add(new LineTo(FUNK_plus_BETWEEN + modelingGasStation.getServiceAreaDepartureI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25, (modelingGasStation.getGasStationDepartureJ() + 1) * size + modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + 25));
+
+                                        //Путь до конца
+
+                                        pathToEnd.getElements().add(new LineTo(FUNK_plus_BETWEEN + modeling.getWidth() + 50, modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + modelingGasStation.getServiceBlockV() * size + 25));
+
+                                        pathTransitionToEnd.setDuration(Duration.millis((modelingGasStation.getHORIZONTAL_MARGIN() / size * 500) + (modelingGasStation.getServiceBlockH() - serviceAreaGraph.getDeparture().getI()) * 500 + 500));
+                                        pathTransitionToEnd.setPath(pathToEnd);
+                                        pathTransitionToEnd.setNode(car1);
+                                        pathTransitionToEnd.setPath(pathToEnd);
+                                        pathTransitionToEnd.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                                        pathTransitionToEnd.setInterpolator(Interpolator.LINEAR);
+                                        pathTransitionToEnd.setOnFinished(event4 -> {
+                                            PathTransition pathTransition2 = (PathTransition) event4.getSource();
+                                            transitions.remove(pathTransition2);
+                                            Car car_car_car_car = (Car) pathTransition2.getNode();
+                                            cars.remove(car_car_car_car);
+                                            modeling.getChildren().remove(car_car_car_car);
+                                        });
+                                        pathTransitionToEnd.play();
+                                    });
+
+                                    pathTransitionFromParkingPlace.setDuration(Duration.millis(car_car_car.getPathToServiceAreaDeparture().size() * 500));
+                                    pathTransitionFromParkingPlace.setPath(pathToDeparture);
+                                    pathTransitionFromParkingPlace.setNode(car_car_car);
+                                    pathTransitionFromParkingPlace.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                                    pathTransitionFromParkingPlace.setInterpolator(Interpolator.LINEAR);
+                                    pathTransitionFromParkingPlace.play();
+                                });
+
+                                pathTransition1.play();
+                            });
+                            pathNextTransition.setDuration(Duration.millis(car2.getPathToServiceAreaEntry().size() * 500 + 500));
+                        } else {
+                            pathNext.getElements().add(new LineTo(modeling.getWidth() + 50, modelingGasStation.getSERVICE_AREA_VERTICAL_MARGIN_TOP() + modelingGasStation.getServiceBlockV() * size + 25));
+                            pathNextTransition.setOnFinished((event5 -> {
+                                PathTransition pathTransition1 = (PathTransition) event5.getSource();
+                                transitions.remove(pathTransition1);
+                                Car car_car = (Car) pathTransition1.getNode();
+                                cars.remove(car_car);
+                                modeling.getChildren().remove(car_car);
+                            }));
+                            pathNextTransition.setDuration(Duration.millis(modelingGasStation.getHORIZONTAL_MARGIN() / size * 500 + (modelingGasStation.getServiceBlockH() + 1 - modelingGasStation.getServiceAreaEntryI()) * 500));
+                        }
+                        pathNextTransition.setPath(pathNext);
+                        pathNextTransition.setNode(car2);
+                        pathNextTransition.setPath(pathNext);
+                        pathNextTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                        pathNextTransition.setInterpolator(Interpolator.LINEAR);
+                        pathNextTransition.play();
+                    });
+
+
+                    pathTransition.setDuration(Duration.millis(serviceAreaGraph.getEntry().getI() * 500
+                            + (modelingGasStation.getHORIZONTAL_MARGIN() / size * 500)));
+                    pathTransition.setNode(car);
+                    pathTransition.setPath(path);
+                    pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pathTransition.setInterpolator(Interpolator.LINEAR);
+                    pathTransition.play();
+                    intervalGetter.generateNext();
+                    lastHighway = now;
+                }
             }
         }
 
-    //        public void pauseAnimation(){
+        //        public void pauseAnimation(){
 //            for (PathTransition pathTransition:
 //                    transitions) {
 //                pathTransition.pause();
@@ -908,8 +1079,8 @@ public class ConstructorController {
 //            this.stop();
 //        }
 //
-        public void resumeAnimation(){
-            for (PathTransition pathTransition:
+        public void resumeAnimation() {
+            for (PathTransition pathTransition :
                     transitions) {
                 pathTransition.play();
             }
@@ -932,7 +1103,8 @@ public class ConstructorController {
 //            this.stop();
 //        }
     }
-//
+
+    //
     @FXML
     public void onStartModeling() {
         if (modelingTimer == null || !isStartedModeling) {

@@ -561,4 +561,8 @@ public class GasStation implements Serializable {
     public double getGAS_STATION_VERTICAL_MARGIN_TOP() {
         return GAS_STATION_VERTICAL_MARGIN_TOP;
     }
+
+    public double getSERVICE_AREA_VERTICAL_MARGIN_TOP() {
+        return SERVICE_AREA_VERTICAL_MARGIN_TOP;
+    }
 }

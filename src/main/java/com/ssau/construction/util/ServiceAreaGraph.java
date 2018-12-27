@@ -190,14 +190,14 @@ public class ServiceAreaGraph implements Iterable<Node> {
     private PriorityQueue<GasolineTankNode> freeGasolineTanks = new PriorityQueue<>();
 
 
-    public GasolineTankNode getFreeParkingPlace() {
+    public GasolineTankNode getFreeGasolineTank() {
 
         if (freeGasolineTanks.size() > 0) {
             return freeGasolineTanks.remove();
         } else return null;
     }
 
-    public boolean hasFreeParkingPlaces() {
+    public boolean hasFreeGasolineTanks() {
         return freeGasolineTanks.size() > 0;
     }
 

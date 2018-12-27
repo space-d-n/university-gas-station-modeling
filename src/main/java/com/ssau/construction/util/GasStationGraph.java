@@ -197,7 +197,7 @@ public class GasStationGraph implements Iterable<Node> {
         } else return null;
     }
 
-    public boolean hasFreeParkingPlaces() {
+    public boolean hasFreeGasolinePumps() {
         return freeGasolinePumps.size() > 0;
     }
 
