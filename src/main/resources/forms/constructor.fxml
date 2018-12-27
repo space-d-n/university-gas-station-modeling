@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -16,7 +15,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="746.0" prefWidth="1084.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ssau.construction.controller.ConstructorController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="746.0" prefWidth="1084.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ssau.construction.controller.ConstructorController">
     <children>
         <BorderPane fx:id="borderPane" layoutX="139.0" layoutY="70.0" prefHeight="681.0" prefWidth="957.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <top>
@@ -58,6 +57,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
                                                 <ImageView fx:id="imageViewRoad" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseRoad" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
@@ -68,15 +68,20 @@
                                                         <Image url="@../pictures/road.jpg" />
                                                     </image>
                                                 </ImageView>
-                                                <ImageView fx:id="imageViewParkingPlace" fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                <ImageView fx:id="imageViewGasolinePump" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseGasolinePump" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                     <image>
-                                                        <Image url="@../pictures/parking_place.png" />
+                                                        <Image url="@../pictures/gasoline_pump.png" />
                                                     </image>
                                                     <GridPane.margin>
                                                         <Insets left="5.0" right="5.0" />
                                                     </GridPane.margin>
                                                 </ImageView>
-                                                <ImageView fx:id="imageViewEntry" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseEntry" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                    <ImageView fx:id="imageViewGasolineTank" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseGasolineTank" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                       <image>
+                                          <Image url="@../pictures/gasoline_tank.png" />
+                                       </image>
+                                    </ImageView>
+                                                <ImageView fx:id="imageViewEntry" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseEntry" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                                     <image>
                                                         <Image url="@../pictures/entry.png" />
                                                     </image>
@@ -84,7 +89,7 @@
                                                         <Insets left="5.0" right="5.0" />
                                                     </GridPane.margin>
                                                 </ImageView>
-                                                <ImageView fx:id="imageViewDeparture" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseDeparture" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                <ImageView fx:id="imageViewDeparture" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseDeparture" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                                     <image>
                                                         <Image url="@../pictures/departure.png" />
                                                     </image>
@@ -92,7 +97,7 @@
                                                         <Insets left="5.0" right="5.0" />
                                                     </GridPane.margin>
                                                 </ImageView>
-                                                <ImageView fx:id="imageViewCashBox" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseCashBox" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                <ImageView fx:id="imageViewCashBox" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseCashBox" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                                     <image>
                                                         <Image url="@../pictures/cashBox.png" />
                                                     </image>
@@ -100,7 +105,7 @@
                                                         <Insets left="5.0" right="5.0" />
                                                     </GridPane.margin>
                                                 </ImageView>
-                                                <ImageView fx:id="imageViewInfoTable" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseInfoTable" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="5">
+                                                <ImageView fx:id="imageViewInfoTable" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseInfoTable" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="6">
                                                     <image>
                                                         <Image url="@../pictures/infoTable.png" />
                                                     </image>
@@ -108,7 +113,7 @@
                                                         <Insets left="5.0" right="5.0" />
                                                     </GridPane.margin>
                                                 </ImageView>
-                                                <ImageView fx:id="imageViewLawn" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseLawn" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="6">
+                                                <ImageView fx:id="imageViewLawn" fitHeight="75.0" fitWidth="75.0" onMouseClicked="#onChooseLawn" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="7">
                                                     <image>
                                                         <Image url="@../pictures/lawn.jpg" />
                                                     </image>
@@ -142,22 +147,22 @@
                                                                 <Image url="@../pictures/settings_icon2.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fitHeight="50.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                                        <ImageView fitHeight="50.0" fitWidth="57.0" onMouseClicked="#onConstructorSettingsClick" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER">
                                                             <image>
                                                                 <Image url="@../pictures/setting_icon.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fitHeight="47.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                                                        <ImageView fitHeight="47.0" fitWidth="47.0" onMouseClicked="#onCheck" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
                                                             <image>
                                                                 <Image url="@../pictures/submit_icon2.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fitHeight="60.0" fitWidth="48.0" nodeOrientation="RIGHT_TO_LEFT" onMouseClicked="#onConstructorLoad" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="RIGHT">
+                                                        <ImageView fitHeight="60.0" fitWidth="48.0" nodeOrientation="RIGHT_TO_LEFT" onMouseClicked="#onConstructorLoad" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
                                                             <image>
                                                                 <Image url="@../pictures/load_icon2.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="go_button" fitHeight="51.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
+                                                        <ImageView fx:id="go_button" fitHeight="51.0" fitWidth="53.0" onMouseClicked="#onGoToModeling" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
                                                             <image>
                                                                 <Image url="@../pictures/goto_icon2.png" />
                                                             </image>
@@ -185,16 +190,14 @@
                                                 <Pane fx:id="modeling" BorderPane.alignment="CENTER" />
                                             </center>
                                             <top>
-                                                <GridPane maxWidth="450.0" prefHeight="50.0" prefWidth="450.0" BorderPane.alignment="TOP_LEFT">
+                                                <GridPane maxWidth="450.0" prefHeight="50.0" prefWidth="403.0" BorderPane.alignment="TOP_LEFT">
                                                     <columnConstraints>
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="52.0" minWidth="0.0" percentWidth="25.0" prefWidth="51.0" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="542.0" minWidth="0.0" percentWidth="25.0" prefWidth="46.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="0.0" percentWidth="25.0" prefWidth="42.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="0.0" percentWidth="25.0" prefWidth="105.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="50.0" prefWidth="105.0" />
                                                     </columnConstraints>
                                                     <rowConstraints>
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -208,37 +211,31 @@
                                                                 <Image url="@../pictures/load_icon2.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fitHeight="49.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                                                            <image>
-                                                                <Image url="@../pictures/parking_settings_icon.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fitHeight="47.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                                                        <ImageView fitHeight="47.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
                                                             <image>
                                                                 <Image url="@../pictures/trafic_settings.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
+                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
                                                             <image>
                                                                 <Image url="@../pictures/play_icon_disabled.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="pause_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
+                                                        <ImageView fx:id="pause_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
                                                             <image>
                                                                 <Image url="@../pictures/pause_icon_disabled.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="stop_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5">
+                                                        <ImageView fx:id="stop_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
                                                             <image>
                                                                 <Image url="@../pictures/stop_icon_disabled.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="table_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6">
+                                                        <ImageView fx:id="table_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5">
                                                             <image>
                                                                 <Image url="@../pictures/table_icon_disabled.png" />
                                                             </image>
                                                         </ImageView>
-                                                        <Canvas fx:id="modelTimeCanvas" height="54.0" width="101.0" GridPane.columnIndex="7" />
                                                     </children>
                                                 </GridPane>
                                             </top>

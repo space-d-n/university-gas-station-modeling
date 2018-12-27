@@ -6,38 +6,58 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.io.File;
 import java.io.Serializable;
 
 public class GasStation implements Serializable {
 
     private FunctionalBlock[][] gasStation;
+    private FunctionalBlock[][] serviceArea;
     private transient GraphicsContext graphicsContext;
     private int size;
 
-    private int entryI = -1;
-    private int entryJ = -1;
-    private int departureI = -1;
-    private int departureJ = -1;
+    private int gasStationEntryI = -1;
+    private int gasStationEntryJ = -1;
+    private int gasStationDepartureI = -1;
+    private int gasStationDepartureJ = -1;
+    private int serviceAreaEntryI = -1;
+    private int serviceAreaEntryJ = -1;
+    private int serviceAreaDepartureI = -1;
+    private int serviceAreaDepartureJ = -1;
     private int infoTableI = -1;
     private int infoTableJ = -1;
     private int cashBoxI = -1;
     private int cashBoxJ = -1;
 
-    public int getEntryI() {
-        return entryI;
+    public int getGasStationEntryI() {
+        return gasStationEntryI;
     }
 
-    public int getEntryJ() {
-        return entryJ;
+    public int getGasStationEntryJ() {
+        return gasStationEntryJ;
     }
 
-    public int getDepartureI() {
-        return departureI;
+    public int getGasStationDepartureI() {
+        return gasStationDepartureI;
     }
 
-    public int getDepartureJ() {
-        return departureJ;
+    public int getGasStationDepartureJ() {
+        return gasStationDepartureJ;
+    }
+
+    public int getServiceAreaEntryI() {
+        return serviceAreaEntryI;
+    }
+
+    public int getServiceAreaEntryJ() {
+        return serviceAreaEntryJ;
+    }
+
+    public int getServiceAreaDepartureI() {
+        return serviceAreaDepartureI;
+    }
+
+    public int getServiceAreaDepartureJ() {
+        return serviceAreaDepartureJ;
     }
 
     public int getInfoTableI() {
@@ -65,11 +85,19 @@ public class GasStation implements Serializable {
     private int serviceBlockH;
     private int serviceBlockV;
     private final double HORIZONTAL_MARGIN;
-    private final double VERTICAL_MARGIN;
+    private final double GAS_STATION_VERTICAL_MARGIN_TOP;
+    private final double GAS_STATION_VERTICAL_MARGIN_BOTTOM;
+    private final double SERVICE_AREA_VERTICAL_MARGIN_TOP;
+    private final double SERVICE_AREA_VERTICAL_MARGIN_BOTTOM;
     private final double HIGHWAY_SIZE;
+    public static final int DISTANCE_BETWEEN = 50;
 
     public FunctionalBlock[][] getGasStation() {
         return gasStation;
+    }
+
+    public FunctionalBlock[][] getServiceArea() {
+        return serviceArea;
     }
 
     public int getFunctionalBlockH() {
@@ -80,8 +108,17 @@ public class GasStation implements Serializable {
         return functionalBlockV;
     }
 
+    public int getServiceBlockH() {
+        return serviceBlockH;
+    }
+
+    public int getServiceBlockV() {
+        return serviceBlockV;
+    }
+
     public GasStation(int functionalBlockH, int functionalBlockV, int serviceBlockH, int serviceBlockV, GraphicsContext graphicsContext, int size) {
-        gasStation = new FunctionalBlock[functionalBlockH + serviceBlockH][functionalBlockV];
+        gasStation = new FunctionalBlock[functionalBlockH][functionalBlockV];
+        serviceArea = new FunctionalBlock[serviceBlockH][serviceBlockV];
         this.graphicsContext = graphicsContext;
         this.size = size;
         this.functionalBlockH = functionalBlockH;
@@ -89,20 +126,37 @@ public class GasStation implements Serializable {
         this.serviceBlockH = serviceBlockH;
         this.serviceBlockV = serviceBlockV;
         HIGHWAY_SIZE = 2 * size;
-        HORIZONTAL_MARGIN = graphicsContext.getCanvas().getWidth() / 2 - functionalBlockH * size / 2;
-        VERTICAL_MARGIN = graphicsContext.getCanvas().getHeight() / 2 - functionalBlockV * size / 2 - HIGHWAY_SIZE / 2;
-        for (int i = 0; i < functionalBlockH + serviceBlockH; i++)
+        HORIZONTAL_MARGIN = graphicsContext.getCanvas().getWidth() / 2 - functionalBlockH * size / 2 - serviceBlockH * size / 2 - DISTANCE_BETWEEN / 2;
+        if (functionalBlockV > serviceBlockV) {
+            GAS_STATION_VERTICAL_MARGIN_TOP = (graphicsContext.getCanvas().getHeight() - functionalBlockV * size - HIGHWAY_SIZE) / 2;
+            SERVICE_AREA_VERTICAL_MARGIN_TOP = (graphicsContext.getCanvas().getHeight() - serviceBlockV * size - HIGHWAY_SIZE) / 2 + (Math.max(serviceBlockV, functionalBlockV) - Math.min(serviceBlockV, functionalBlockV)) * size / 2;
+        } else {
+            GAS_STATION_VERTICAL_MARGIN_TOP = (graphicsContext.getCanvas().getHeight() - functionalBlockV * size - HIGHWAY_SIZE) / 2 + (Math.max(serviceBlockV, functionalBlockV) - Math.min(serviceBlockV, functionalBlockV)) * size / 2;
+            SERVICE_AREA_VERTICAL_MARGIN_TOP = (graphicsContext.getCanvas().getHeight() - serviceBlockV * size - HIGHWAY_SIZE) / 2;
+        }
+        GAS_STATION_VERTICAL_MARGIN_BOTTOM = graphicsContext.getCanvas().getHeight() - (functionalBlockV * size - HIGHWAY_SIZE) / 2 - GAS_STATION_VERTICAL_MARGIN_TOP;
+        SERVICE_AREA_VERTICAL_MARGIN_BOTTOM = graphicsContext.getCanvas().getHeight() - (serviceBlockV * size - HIGHWAY_SIZE) / 2 - SERVICE_AREA_VERTICAL_MARGIN_TOP;
+        for (int i = 0; i < functionalBlockH; i++) {
             for (int j = 0; j < functionalBlockV; j++) {
                 gasStation[i][j] = new Road(graphicsContext);
             }
+        }
+        for (int i = 0; i < serviceBlockH; i++) {
+            for (int j = 0; j < serviceBlockV; j++) {
+                serviceArea[i][j] = new Road(graphicsContext);
+            }
+        }
+
     }
 
-    public GasStation(int functionalBlockH, int functionalBlockV, int serviceBlockN, int serviceBlockV, GraphicsContext graphicsContext, int size, GasStation oldGasStation) {
-        this(functionalBlockH, functionalBlockV, serviceBlockN, serviceBlockN, graphicsContext, size);
-        int minH = (functionalBlockH > oldGasStation.functionalBlockH) ? oldGasStation.functionalBlockH : functionalBlockH;
-        int minV = (functionalBlockV > oldGasStation.functionalBlockV) ? oldGasStation.functionalBlockV : functionalBlockV;
-        for (int i = 0; i < minH; i++)
-            for (int j = 0; j < minV; j++) {
+    public GasStation(int functionalBlockH, int functionalBlockV, int serviceBlockH, int serviceBlockV, GraphicsContext graphicsContext, int size, GasStation oldGasStation) {
+        this(functionalBlockH, functionalBlockV, serviceBlockH, serviceBlockV, graphicsContext, size);
+        int minGasStationH = (functionalBlockH > oldGasStation.functionalBlockH) ? oldGasStation.functionalBlockH : functionalBlockH;
+        int minGasStationV = (functionalBlockV > oldGasStation.functionalBlockV) ? oldGasStation.functionalBlockV : functionalBlockV;
+        int minServiceAreaH = (serviceBlockH > oldGasStation.serviceBlockH) ? oldGasStation.serviceBlockH : serviceBlockH;
+        int minServiceAreaV = (serviceBlockV > oldGasStation.serviceBlockV) ? oldGasStation.serviceBlockV : serviceBlockV;
+        for (int i = 0; i < minGasStationH; i++) {
+            for (int j = 0; j < minGasStationV; j++) {
                 try {
                     gasStation[i][j] = (FunctionalBlock) oldGasStation.gasStation[i][j].clone();
                 } catch (CloneNotSupportedException e) {
@@ -110,17 +164,31 @@ public class GasStation implements Serializable {
                 }
                 gasStation[i][j].setGraphicsContext(graphicsContext);
             }
-        for (int i = minH; i < functionalBlockH; i++)
-            for (int j = minV; j < functionalBlockV; j++)
-                gasStation[i][j] = new Road(graphicsContext);
-
-        if (oldGasStation.entryI < functionalBlockH && oldGasStation.entryJ < functionalBlockV) {
-            entryI = oldGasStation.entryI;
-            entryJ = oldGasStation.entryJ;
         }
-        if (oldGasStation.departureI < functionalBlockH && oldGasStation.departureJ < functionalBlockV) {
-            departureI = oldGasStation.departureI;
-            departureJ = oldGasStation.departureJ;
+        for (int i = 0; i < minServiceAreaH; i++) {
+            for (int j = 0; j < minServiceAreaV; j++) {
+                try {
+                    serviceArea[i][j] = (FunctionalBlock) oldGasStation.serviceArea[i][j].clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+                serviceArea[i][j].setGraphicsContext(graphicsContext);
+            }
+        }
+        for (int i = minGasStationH; i < functionalBlockH; i++)
+            for (int j = minGasStationV; j < functionalBlockV; j++)
+                gasStation[i][j] = new Road(graphicsContext);
+        for (int i = minServiceAreaH; i < serviceBlockH; i++)
+            for (int j = minServiceAreaV; j < serviceBlockV; j++)
+                serviceArea[i][j] = new Road(graphicsContext);
+
+        if (oldGasStation.gasStationEntryI < functionalBlockH && oldGasStation.gasStationEntryJ < functionalBlockV) {
+            gasStationEntryI = oldGasStation.gasStationEntryI;
+            gasStationEntryJ = oldGasStation.gasStationEntryJ;
+        }
+        if (oldGasStation.gasStationDepartureI < functionalBlockH && oldGasStation.gasStationDepartureJ < functionalBlockV) {
+            gasStationDepartureI = oldGasStation.gasStationDepartureI;
+            gasStationDepartureJ = oldGasStation.gasStationDepartureJ;
         }
         if (oldGasStation.infoTableI < functionalBlockH && oldGasStation.infoTableJ < functionalBlockV) {
             infoTableI = oldGasStation.infoTableI;
@@ -130,47 +198,78 @@ public class GasStation implements Serializable {
             cashBoxI = oldGasStation.cashBoxI;
             cashBoxJ = oldGasStation.cashBoxJ;
         }
+        if (oldGasStation.serviceAreaEntryI < serviceBlockH && oldGasStation.serviceAreaEntryJ < serviceBlockV) {
+            serviceAreaEntryI = oldGasStation.serviceAreaEntryI;
+            serviceAreaEntryJ = oldGasStation.serviceAreaEntryJ;
+        }
+        if (oldGasStation.serviceAreaDepartureI < serviceBlockH && oldGasStation.serviceAreaDepartureJ < serviceBlockV) {
+            serviceAreaDepartureI = oldGasStation.serviceAreaDepartureI;
+            serviceAreaDepartureJ = oldGasStation.serviceAreaDepartureJ;
+        }
     }
 
-    public FunctionalBlock getFunctionalBlock(int i, int j) {
+    public FunctionalBlock getGasStationFunctionalBlock(int i, int j) {
         return gasStation[i][j];
+    }
+
+    public FunctionalBlock getServiceAreaFunctionalBlock(int i, int j) {
+        return serviceArea[i][j];
     }
 
     //Отрисовка разметки
     public void drawMarkup() {
-        for (int i = 0; i <= functionalBlockH + serviceBlockH; i++) {
+        // gas station markup
+        for (int i = 0; i <= functionalBlockH; i++) {
             graphicsContext.strokeLine(
-                    HORIZONTAL_MARGIN + i * size, VERTICAL_MARGIN, HORIZONTAL_MARGIN + i * size,
-                    VERTICAL_MARGIN + functionalBlockV * size);
+                    HORIZONTAL_MARGIN + i * size, GAS_STATION_VERTICAL_MARGIN_TOP,
+                    HORIZONTAL_MARGIN + i * size, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size);
         }
         for (int i = 0; i <= functionalBlockV; i++) {
             graphicsContext.strokeLine(
-                    HORIZONTAL_MARGIN, VERTICAL_MARGIN + i * size,
-                    HORIZONTAL_MARGIN + functionalBlockH * size,
-                    VERTICAL_MARGIN + i * size);
+                    HORIZONTAL_MARGIN, GAS_STATION_VERTICAL_MARGIN_TOP + i * size,
+                    HORIZONTAL_MARGIN + functionalBlockH * size, GAS_STATION_VERTICAL_MARGIN_TOP + i * size);
+        }
+        // service area markup
+        for (int i = 0; i <= serviceBlockH; i++) {
+            graphicsContext.strokeLine(
+                    HORIZONTAL_MARGIN + i * size + (functionalBlockH * size) + DISTANCE_BETWEEN, SERVICE_AREA_VERTICAL_MARGIN_TOP,
+                    HORIZONTAL_MARGIN + i * size + (functionalBlockH * size) + DISTANCE_BETWEEN, SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size);
+        }
+        for (int i = 0; i <= serviceBlockV; i++) {
+            graphicsContext.strokeLine(
+                    HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN, SERVICE_AREA_VERTICAL_MARGIN_TOP + i * size,
+                    HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN + (serviceBlockH * size), SERVICE_AREA_VERTICAL_MARGIN_TOP + i * size);
         }
     }
 
-    //Отрисовка функционального блока
-    public void drawFunctionalBlock(double x, double y) {
+    //Отрисовка функционального блока на заправке
+    public void drawGasStationFunctionalBlock(double x, double y) {
         int i = ((int) (x - HORIZONTAL_MARGIN)) / size;
-        int j = ((int) (y - VERTICAL_MARGIN)) / size;
-        graphicsContext.clearRect(HORIZONTAL_MARGIN + i * size + 1, VERTICAL_MARGIN + j * size + 1, size - 2, size - 2);
-        gasStation[i][j].render(HORIZONTAL_MARGIN + i * size + 1, VERTICAL_MARGIN + j * size + 1, size - 1);
+        int j = ((int) (y - GAS_STATION_VERTICAL_MARGIN_TOP)) / size;
+        graphicsContext.clearRect(HORIZONTAL_MARGIN + i * size + 1, GAS_STATION_VERTICAL_MARGIN_TOP + j * size + 1, size - 2, size - 2);
+        gasStation[i][j].render(HORIZONTAL_MARGIN + i * size + 1, GAS_STATION_VERTICAL_MARGIN_TOP + j * size + 1, size - 1);
+    }
+
+    //Отрисовка функционального блока в сервисной зоне
+    public void drawServiceAreaFunctionalBlock(double x, double y) {
+        int i = ((int) (x - HORIZONTAL_MARGIN - functionalBlockH * size - DISTANCE_BETWEEN)) / size;
+        int j = ((int) (y - SERVICE_AREA_VERTICAL_MARGIN_TOP)) / size;
+        graphicsContext.clearRect(HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN + i * size + 1, SERVICE_AREA_VERTICAL_MARGIN_TOP + j * size + 1, size - 2, size - 2);
+        serviceArea[i][j].render(HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN + i * size + 1, SERVICE_AREA_VERTICAL_MARGIN_TOP + j * size + 1, size - 1);
     }
 
 
-    //Создание функционального блока
-    public void createFunctionalBlock(double x, double y, Template template) {
+    //Создание функционального блока на заправке
+    public void createGasStationFunctionalBlock(double x, double y, Template template) {
         int i = ((int) (x - HORIZONTAL_MARGIN)) / size;
-        int j = ((int) (y - VERTICAL_MARGIN)) / size;
-        if (i == entryI && j == entryJ) {
-            entryI = -1;
-            entryJ = -1;
+        int j = ((int) (y - GAS_STATION_VERTICAL_MARGIN_TOP)) / size;
+        if (i == gasStationEntryI && j == gasStationEntryJ) {
+            gasStationEntryI = -1;
+            gasStationEntryJ = -1;
         }
-        if (i == departureI && j == departureJ) {
-            departureI = -1;
-            departureJ = -1;
+        if (i == gasStationDepartureI && j == gasStationDepartureJ) {
+            gasStationDepartureI = -1;
+            gasStationDepartureJ = -1;
         }
         if (i == infoTableI && j == infoTableJ) {
             infoTableI = -1;
@@ -185,7 +284,7 @@ public class GasStation implements Serializable {
                 gasStation[i][j] = new CashBox(graphicsContext);
                 if (cashBoxI != -1 && cashBoxJ != -1) {
                     gasStation[cashBoxI][cashBoxJ] = new Road(graphicsContext);
-                    drawFunctionalBlock(cashBoxI * size + HORIZONTAL_MARGIN, cashBoxJ * size + VERTICAL_MARGIN);
+                    drawGasStationFunctionalBlock(cashBoxI * size + HORIZONTAL_MARGIN, cashBoxJ * size + GAS_STATION_VERTICAL_MARGIN_TOP);
                 }
                 cashBoxI = i;
                 cashBoxJ = j;
@@ -194,7 +293,7 @@ public class GasStation implements Serializable {
                 gasStation[i][j] = new InfoTable(graphicsContext);
                 if (infoTableI != -1 && infoTableJ != -1) {
                     gasStation[infoTableI][infoTableJ] = new Road(graphicsContext);
-                    drawFunctionalBlock(infoTableI * size + HORIZONTAL_MARGIN, infoTableJ * size + VERTICAL_MARGIN);
+                    drawGasStationFunctionalBlock(infoTableI * size + HORIZONTAL_MARGIN, infoTableJ * size + GAS_STATION_VERTICAL_MARGIN_TOP);
                 }
                 infoTableI = i;
                 infoTableJ = j;
@@ -207,112 +306,211 @@ public class GasStation implements Serializable {
                 break;
             case Entry:
                 gasStation[i][j] = new Entry(graphicsContext);
-                if (entryI != -1 && entryJ != -1) {
-                    gasStation[entryI][entryJ] = new Road(graphicsContext);
-                    drawFunctionalBlock(entryI * size + HORIZONTAL_MARGIN, entryJ * size + VERTICAL_MARGIN);
+                if (gasStationEntryI != -1 && gasStationEntryJ != -1) {
+                    gasStation[gasStationEntryI][gasStationEntryJ] = new Road(graphicsContext);
+                    drawGasStationFunctionalBlock(gasStationEntryI * size + HORIZONTAL_MARGIN, gasStationEntryJ * size + GAS_STATION_VERTICAL_MARGIN_TOP);
                 }
-                entryI = i;
-                entryJ = j;
+                gasStationEntryI = i;
+                gasStationEntryJ = j;
                 break;
             case Departure:
                 gasStation[i][j] = new Departure(graphicsContext);
-                if (departureI != -1 && departureJ != -1) {
-                    gasStation[departureI][departureJ] = new Road(graphicsContext);
-                    drawFunctionalBlock(departureI * size + HORIZONTAL_MARGIN, departureJ * size + VERTICAL_MARGIN);
+                if (gasStationDepartureI != -1 && gasStationDepartureJ != -1) {
+                    gasStation[gasStationDepartureI][gasStationDepartureJ] = new Road(graphicsContext);
+                    drawGasStationFunctionalBlock(gasStationDepartureI * size + HORIZONTAL_MARGIN, gasStationDepartureJ * size + GAS_STATION_VERTICAL_MARGIN_TOP);
                 }
-                departureI = i;
-                departureJ = j;
+                gasStationDepartureI = i;
+                gasStationDepartureJ = j;
                 break;
             case GasolinePump:
                 gasStation[i][j] = new GasolinePump(graphicsContext);
                 break;
             case GasolineTank:
-                gasStation[i][j] = new GasolineTank(graphicsContext);
+//                gasStation[i][j] = new GasolineTank(graphicsContext);
+                break;
+        }
+    }
+
+    //Создание функционального блока в сервисной зоне
+    public void createServiceAreaFunctionalBlock(double x, double y, Template template) {
+        int i = ((int) (x - HORIZONTAL_MARGIN - functionalBlockH * size - DISTANCE_BETWEEN)) / size;
+        int j = ((int) (y - SERVICE_AREA_VERTICAL_MARGIN_TOP)) / size;
+        if (i == serviceAreaEntryI && j == serviceAreaEntryJ) {
+            serviceAreaEntryI = -1;
+            serviceAreaEntryJ = -1;
+        }
+        if (i == serviceAreaDepartureI && j == serviceAreaDepartureJ) {
+            serviceAreaDepartureI = -1;
+            serviceAreaDepartureJ = -1;
+        }
+        switch (template) {
+            case CashBox:
+                break;
+            case InfoTable:
+                break;
+            case Road:
+                serviceArea[i][j] = new Road(graphicsContext);
+                break;
+            case Lawn:
+                serviceArea[i][j] = new Lawn(graphicsContext);
+                break;
+            case Entry:
+                serviceArea[i][j] = new Entry(graphicsContext);
+                if (serviceAreaEntryI != -1 && serviceAreaEntryJ != -1) {
+                    serviceArea[serviceAreaEntryI][serviceAreaEntryJ] = new Road(graphicsContext);
+                    drawServiceAreaFunctionalBlock(serviceAreaEntryI * size + HORIZONTAL_MARGIN + functionalBlockH * size + DISTANCE_BETWEEN, serviceAreaEntryJ * size + SERVICE_AREA_VERTICAL_MARGIN_TOP);
+                }
+                serviceAreaEntryI = i;
+                serviceAreaEntryJ = j;
+                break;
+            case Departure:
+                serviceArea[i][j] = new Departure(graphicsContext);
+                if (serviceAreaDepartureI != -1 && serviceAreaDepartureJ != -1) {
+                    serviceArea[serviceAreaDepartureI][serviceAreaDepartureJ] = new Road(graphicsContext);
+                    drawServiceAreaFunctionalBlock(serviceAreaDepartureI * size + HORIZONTAL_MARGIN + functionalBlockH * size + DISTANCE_BETWEEN, serviceAreaDepartureJ * size + SERVICE_AREA_VERTICAL_MARGIN_TOP);
+                }
+                serviceAreaDepartureI = i;
+                serviceAreaDepartureJ = j;
+                break;
+            case GasolinePump:
+                break;
+            case GasolineTank:
+                serviceArea[i][j] = new GasolineTank(graphicsContext);
                 break;
         }
     }
 
     public void drawFunctionalBlocks() {
-        for (int i = 0; i < functionalBlockH + serviceBlockH; i++)
-            for (int j = 0; j < functionalBlockV; j++)
+        //gas station
+        for (int i = 0; i < functionalBlockH; i++) {
+            for (int j = 0; j < functionalBlockV; j++) {
                 if (gasStation[i][j] != null) {
-                    graphicsContext.clearRect(HORIZONTAL_MARGIN + i * size + 1, VERTICAL_MARGIN + j * size + 1, size - 2, size - 2);
-                    gasStation[i][j].render(HORIZONTAL_MARGIN + i * size + 1, VERTICAL_MARGIN + j * size + 1, size - 1);
+                    graphicsContext.clearRect(HORIZONTAL_MARGIN + i * size + 1, GAS_STATION_VERTICAL_MARGIN_TOP + j * size + 1, size - 2, size - 2);
+                    gasStation[i][j].render(HORIZONTAL_MARGIN + i * size + 1, GAS_STATION_VERTICAL_MARGIN_TOP + j * size + 1, size - 1);
                 }
+            }
+        }
+
+        //service area
+        for (int i = 0; i < serviceBlockH; i++) {
+            for (int j = 0; j < serviceBlockV; j++) {
+                if (serviceArea[i][j] != null) {
+                    graphicsContext.clearRect(HORIZONTAL_MARGIN + i * size + 1 + (functionalBlockH * size) + DISTANCE_BETWEEN, SERVICE_AREA_VERTICAL_MARGIN_TOP + j * size + 1, size - 2, size - 2);
+                    serviceArea[i][j].render(HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN + i * size + 1, SERVICE_AREA_VERTICAL_MARGIN_TOP + j * size + 1, size - 1);
+                }
+            }
+        }
     }
 
     public void drawFunctionalBlocksInModeling() {
-        for (int i = 0; i < functionalBlockH + serviceBlockH; i++)
-            for (int j = 0; j < functionalBlockV + serviceBlockV; j++)
+
+        //gas station
+        for (int i = 0; i < functionalBlockH; i++) {
+            for (int j = 0; j < functionalBlockV; j++) {
                 if (gasStation[i][j] != null) {
-                    gasStation[i][j].render(HORIZONTAL_MARGIN + i * size, VERTICAL_MARGIN + j * size, size);
+                    gasStation[i][j].render(HORIZONTAL_MARGIN + i * size + 1, GAS_STATION_VERTICAL_MARGIN_TOP + j * size, size);
                 }
+            }
+        }
+
+        //service area
+        for (int i = 0; i < serviceBlockH; i++) {
+            for (int j = 0; j < serviceBlockV; j++) {
+                if (serviceArea[i][j] != null) {
+                    serviceArea[i][j].render(HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN + i * size + 1, SERVICE_AREA_VERTICAL_MARGIN_TOP + j * size, size);
+                }
+            }
+        }
     }
 
     //Отрисовка шоссе
     public void drawHighway() {
-        String imagePath = "pictures/highway_road.jpg";
-        Image image = new Image(imagePath);
+        String highwayImagePath = "pictures/highway_road.jpg";
+        Image highwayImage = new Image(highwayImagePath);
         for (int i = 0; i < graphicsContext.getCanvas().getWidth() / HIGHWAY_SIZE; i++) {
-            graphicsContext.drawImage(image, 2 * i * size, VERTICAL_MARGIN + functionalBlockV * size + 1, HIGHWAY_SIZE, HIGHWAY_SIZE);
+            graphicsContext.drawImage(highwayImage, 2 * i * size, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size + 1, HIGHWAY_SIZE, HIGHWAY_SIZE);
         }
     }
 
     public void drawHighwayInModeling() {
         String imagePath = "pictures/highway_road.jpg";
         Image image = new Image(imagePath);
-        for (int i = 0; i < entryI + HORIZONTAL_MARGIN / size; i++) {
-            graphicsContext.drawImage(image, i * size, VERTICAL_MARGIN + functionalBlockV * size, size, HIGHWAY_SIZE);
+        for (int i = 0; i < gasStationEntryI + HORIZONTAL_MARGIN / size; i++) {
+            graphicsContext.drawImage(image, i * size, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
         }
-        for (int i = entryI + 1 + (int) (Math.floor(HORIZONTAL_MARGIN / size)); i < departureI + (int) (Math.ceil(HORIZONTAL_MARGIN / size)); i++) {
-            graphicsContext.drawImage(image, i * size, VERTICAL_MARGIN + functionalBlockV * size, size, HIGHWAY_SIZE);
+        for (int i = gasStationEntryI + 1 + (int) (Math.floor(HORIZONTAL_MARGIN / size)); i < gasStationDepartureI + (int) (Math.ceil(HORIZONTAL_MARGIN / size)); i++) {
+            graphicsContext.drawImage(image, i * size, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
         }
-        for (int i = departureI + 1 + (int) HORIZONTAL_MARGIN / size; i < graphicsContext.getCanvas().getWidth() / size; i++) {
-            graphicsContext.drawImage(image, i * size, VERTICAL_MARGIN + functionalBlockV * size, size, HIGHWAY_SIZE);
+        for (int i = gasStationDepartureI + 1 + (int) HORIZONTAL_MARGIN / size; i < graphicsContext.getCanvas().getWidth() / size; i++) {
+            graphicsContext.drawImage(image, i * size, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
         }
-        imagePath = "highway_road_ed.jpg";
+        imagePath = "pictures/highway_road_ed.jpg";
         image = new Image(imagePath);
-        graphicsContext.drawImage(image, entryI * size + HORIZONTAL_MARGIN, VERTICAL_MARGIN + functionalBlockV * size, size, HIGHWAY_SIZE);
-        graphicsContext.drawImage(image, departureI * size + HORIZONTAL_MARGIN, VERTICAL_MARGIN + functionalBlockV * size, size, HIGHWAY_SIZE);
+        graphicsContext.drawImage(image, gasStationEntryI * size + HORIZONTAL_MARGIN, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
+        graphicsContext.drawImage(image, gasStationDepartureI * size + HORIZONTAL_MARGIN, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size, size, HIGHWAY_SIZE);
+
+        graphicsContext.clearRect(functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaEntryI * size + 1,
+                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size - 1, HIGHWAY_SIZE);
+
+        graphicsContext.drawImage(image, functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaEntryI * size,
+                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size + 1, HIGHWAY_SIZE);
+
+
+        graphicsContext.clearRect(functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaDepartureI * size + 1,
+                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size - 1, HIGHWAY_SIZE);
+
+        graphicsContext.drawImage(image, functionalBlockH * size + HORIZONTAL_MARGIN + DISTANCE_BETWEEN + serviceAreaDepartureI * size,
+                SERVICE_AREA_VERTICAL_MARGIN_TOP + serviceBlockV * size + 0.5, size + 1, HIGHWAY_SIZE);
     }
 
     public boolean isInGasStation(int x, int y) {
         return x > HORIZONTAL_MARGIN && x < HORIZONTAL_MARGIN + functionalBlockH * size
-                && y > VERTICAL_MARGIN && y < VERTICAL_MARGIN + functionalBlockV * size;
+                && y > GAS_STATION_VERTICAL_MARGIN_TOP && y < GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size;
+    }
+
+    public boolean isInServiceArea(int x, int y) {
+        return x > HORIZONTAL_MARGIN + functionalBlockH * size + DISTANCE_BETWEEN && x < HORIZONTAL_MARGIN + functionalBlockH * size + DISTANCE_BETWEEN + serviceBlockH * size
+                && y > GAS_STATION_VERTICAL_MARGIN_TOP && y < GAS_STATION_VERTICAL_MARGIN_TOP + serviceBlockV * size;
     }
 
     public void drawInfoTableInModeling(int count) {
-        ((InfoTable) gasStation[infoTableI][infoTableJ]).renderInModeling(HORIZONTAL_MARGIN + infoTableI * size, VERTICAL_MARGIN + infoTableJ * size, size, count);
+        ((InfoTable) gasStation[infoTableI][infoTableJ]).renderInModeling(HORIZONTAL_MARGIN + infoTableI * size, GAS_STATION_VERTICAL_MARGIN_TOP + infoTableJ * size, size, count);
     }
 
     public void drawBackground() {
         String imagePath = "pictures/tree.png";
-        Image image = new Image(imagePath);
+        Image treeImage = new Image(imagePath);
         imagePath = "pictures/lawn2.png";
-        Image image2 = new Image(imagePath);
+        Image lawnImage = new Image(imagePath);
         for (int i = 0; i < graphicsContext.getCanvas().getWidth() / size; i++) {
             for (int j = 0; j < graphicsContext.getCanvas().getHeight() / size; j++) {
-                graphicsContext.drawImage(image2, i * size, j * size, size, size);
+                graphicsContext.drawImage(lawnImage, i * size, j * size, size, size);
                 //graphicsContext.drawImage(image,i*size, j*size,size,size);
             }
         }
-        for (int i = -1; i < 1 + functionalBlockH + serviceBlockH; i++) {
-            graphicsContext.drawImage(image, HORIZONTAL_MARGIN + i * size, VERTICAL_MARGIN - size, size, size);
+        for (int i = -1; i < 1 + functionalBlockH; i++) {
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN + i * size, GAS_STATION_VERTICAL_MARGIN_TOP - size, size, size);
+        }
+        for (int i = -1; i < 1 + serviceBlockH; i++) {
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN + (functionalBlockH * size) + DISTANCE_BETWEEN + i * size, SERVICE_AREA_VERTICAL_MARGIN_TOP - size, size, size);
         }
         for (int i = 0; i < functionalBlockV; i++) {
-            graphicsContext.drawImage(image, HORIZONTAL_MARGIN - size, VERTICAL_MARGIN + size * i, size, size);
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN - size, GAS_STATION_VERTICAL_MARGIN_TOP + size * i, size, size);
         }
-        for (int i = 0; i < functionalBlockV; i++) {
-            graphicsContext.drawImage(image, HORIZONTAL_MARGIN + functionalBlockH * size, VERTICAL_MARGIN + size * i, size, size);
+        for (int i = 0; i < Math.max(functionalBlockV, serviceBlockV); i++) {
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN + functionalBlockH * size, Math.min(GAS_STATION_VERTICAL_MARGIN_TOP, SERVICE_AREA_VERTICAL_MARGIN_TOP) + size * i, size, size);
+        }
+        for (int i = 0; i < serviceBlockV; i++) {
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN + (functionalBlockH + serviceBlockH) * size + DISTANCE_BETWEEN, SERVICE_AREA_VERTICAL_MARGIN_TOP + size * i, size, size);
         }
         for (int i = 1; i <= HORIZONTAL_MARGIN / size + 1; i++) {
-            graphicsContext.drawImage(image, HORIZONTAL_MARGIN - i * size, VERTICAL_MARGIN + functionalBlockV * size - size, size, size);
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN - i * size, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size - size, size, size);
         }
         for (int i = 0; i < HORIZONTAL_MARGIN / size; i++) {
-            graphicsContext.drawImage(image, HORIZONTAL_MARGIN + functionalBlockH * size + i * size, VERTICAL_MARGIN + functionalBlockV * size - size, size, size);
+            graphicsContext.drawImage(treeImage, HORIZONTAL_MARGIN + (functionalBlockH + serviceBlockH) * size + i * size + DISTANCE_BETWEEN, GAS_STATION_VERTICAL_MARGIN_TOP + functionalBlockV * size - size, size, size);
         }
         for (int i = 0; i < graphicsContext.getCanvas().getWidth() / size; i++) {
-            graphicsContext.drawImage(image, i * size, VERTICAL_MARGIN + functionalBlockV * size + 2 * size, size, size);
+            graphicsContext.drawImage(treeImage, i * size, GAS_STATION_VERTICAL_MARGIN_TOP + (functionalBlockV + serviceBlockH) * size + 2 * size + DISTANCE_BETWEEN, size, size);
         }
     }
 
@@ -325,9 +523,9 @@ public class GasStation implements Serializable {
                     graphicsContext.setFont(Font.font("Arial", size / 2));
                     ((GasolinePump) gasStation[i][j]).setNumber(number);
                     if (number < 10) {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688, j * size + VERTICAL_MARGIN + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
                     } else {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5, j * size + VERTICAL_MARGIN + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
                     }
 
                     graphicsContext.setFill(Color.BLACK);
@@ -345,9 +543,9 @@ public class GasStation implements Serializable {
                     graphicsContext.setFont(Font.font("Arial", size / 2));
                     ((GasolineTank) gasStation[i][j]).setNumber(number);
                     if (number < 10) {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688, j * size + VERTICAL_MARGIN + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 6.998138688, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
                     } else {
-                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5, j * size + VERTICAL_MARGIN + size / 2 + size / 6);
+                        graphicsContext.fillText(Integer.toString(number), i * size + HORIZONTAL_MARGIN + size / 2 - size / 3.5, j * size + GAS_STATION_VERTICAL_MARGIN_TOP + size / 2 + size / 6);
                     }
 
                     graphicsContext.setFill(Color.BLACK);
@@ -360,7 +558,7 @@ public class GasStation implements Serializable {
         return HORIZONTAL_MARGIN;
     }
 
-    public double getVERTICAL_MARGIN() {
-        return VERTICAL_MARGIN;
+    public double getGAS_STATION_VERTICAL_MARGIN_TOP() {
+        return GAS_STATION_VERTICAL_MARGIN_TOP;
     }
 }

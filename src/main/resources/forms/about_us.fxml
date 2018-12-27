@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="662.0" prefWidth="1084.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="180.0" layoutY="51.0" text="Разработчики проекта: &quot;Моделирование АЗС&quot;">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <Label layoutX="126.0" layoutY="126.0" text="Ожигов Дмитрий Игоревич">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <Label layoutX="618.0" layoutY="126.0" text="Поберезкин Никита Евгеньевич">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="366.0" fitWidth="483.0" layoutX="160.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="/pictures/dmitriy.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="366.0" fitWidth="483.0" layoutX="687.0" layoutY="178.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="/pictures/nikita.jpg" />
+         </image>
+      </ImageView>
+      <Label layoutX="238.0" layoutY="564.0" prefHeight="47.0" prefWidth="632.0" text="Научный руководитель: Зеленко Лариса Сергеевна, ">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="435.0" layoutY="861.0" pickOnBounds="true" preserveRatio="true" />
+      <Label layoutX="238.0" layoutY="601.0" prefHeight="47.0" prefWidth="632.0" text="доцент кафедры программных систем">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

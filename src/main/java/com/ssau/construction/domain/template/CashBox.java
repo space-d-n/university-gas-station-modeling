@@ -8,7 +8,7 @@ public class CashBox extends FunctionalBlock {
     public CashBox(GraphicsContext graphicsContext) {super(graphicsContext);}
 
     public void render(double x, double y, int size) {
-        String imagePath = "cashBox.png";
+        String imagePath = "pictures/cashBox.png";
         Image image = new Image(imagePath);
         graphicsContext.drawImage(image, x, y, size, size);
     }

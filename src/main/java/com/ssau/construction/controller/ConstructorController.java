@@ -2,9 +2,10 @@ package com.ssau.construction.controller;
 
 import com.ssau.construction.domain.GasStation;
 import com.ssau.construction.domain.template.Template;
-import javafx.animation.AnimationTimer;
-import javafx.animation.Interpolator;
-import javafx.animation.PathTransition;
+import com.ssau.construction.util.DeterminateIntervalGetter;
+import com.ssau.construction.util.IntervalGetter;
+import com.ssau.construction.util.Verificator;
+import com.ssau.construction.util.VerificatorError;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,19 +19,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.CubicCurveTo;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ConstructorController {
 
@@ -45,7 +39,7 @@ public class ConstructorController {
     private Menu fileMenu;
 
     @FXML
-    public void showModelingMenuItems(){
+    public void showModelingMenuItems() {
         fileMenu.getItems().get(0).setVisible(false);
         fileMenu.getItems().get(1).setVisible(false);
         fileMenu.getItems().get(2).setVisible(false);
@@ -53,7 +47,7 @@ public class ConstructorController {
     }
 
     @FXML
-    public void showConstructorMenuItems(){
+    public void showConstructorMenuItems() {
         fileMenu.getItems().get(0).setVisible(true);
         fileMenu.getItems().get(1).setVisible(true);
         fileMenu.getItems().get(2).setVisible(true);
@@ -61,7 +55,7 @@ public class ConstructorController {
     }
 
     @FXML
-    public void onMenuSave(){
+    public void onMenuSave() {
         try (FileOutputStream out = new FileOutputStream(initialFile.getPath())) {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
             objectOutputStream.writeObject(constructorGasStation);
@@ -76,8 +70,8 @@ public class ConstructorController {
     }
 
     @FXML
-    public void checkFileMenu(){
-        if (initialFile!=null&&initialFile.exists()&&initialFile.isFile()&&initialFile.canWrite())
+    public void checkFileMenu() {
+        if (initialFile != null && initialFile.exists() && initialFile.isFile() && initialFile.canWrite())
             fileMenu.getItems().get(0).setDisable(false);
         else fileMenu.getItems().get(0).setDisable(true);
     }
@@ -100,15 +94,19 @@ public class ConstructorController {
         size = 50;
         Canvas canvas = new Canvas(819, 587);
         graphicsContextConstructor = canvas.getGraphicsContext2D();
-        constructorGasStation = new GasStation(4, 4,4,4, graphicsContextConstructor, size);
+        constructorGasStation = new GasStation(4, 4, 4, 4, graphicsContextConstructor, size);
 
         canvas.setOnMouseClicked(event -> {
                     if (template != Template.Null) {
                         int x = (int) event.getX();
                         int y = (int) event.getY();
                         if (constructorGasStation.isInGasStation(x, y)) {
-                            constructorGasStation.createFunctionalBlock(x, y, template);
-                            constructorGasStation.drawFunctionalBlock(x, y);
+                            constructorGasStation.createGasStationFunctionalBlock(x, y, template);
+                            constructorGasStation.drawGasStationFunctionalBlock(x, y);
+                        }
+                        if (constructorGasStation.isInServiceArea(x, y)) {
+                            constructorGasStation.createServiceAreaFunctionalBlock(x, y, template);
+                            constructorGasStation.drawServiceAreaFunctionalBlock(x, y);
                         }
                     }
                 }
@@ -121,7 +119,7 @@ public class ConstructorController {
         //Инициализация вкладки моделирования
         canvas = new Canvas(900, 580);
         graphicsContextModeling = canvas.getGraphicsContext2D();
-//        modeling.getChildren().add(canvas);
+        modeling.getChildren().add(canvas);
     }
 
     //Параметры для constructor
@@ -135,7 +133,9 @@ public class ConstructorController {
     @FXML
     private ImageView imageViewRoad;
     @FXML
-    private ImageView imageViewParkingPlace;
+    private ImageView imageViewGasolinePump;
+    @FXML
+    private ImageView imageViewGasolineTank;
     @FXML
     private ImageView imageViewEntry;
     @FXML
@@ -151,30 +151,30 @@ public class ConstructorController {
         graphicsContextConstructor.clearRect(0, 0, graphicsContextConstructor.getCanvas().getWidth(), graphicsContextConstructor.getCanvas().getHeight());
     }
 
-    //Параметры для modeling
-//    private GasStation modelingParking;
-//    private double probability = 1;
-//    private double passengerPercent = 1;
-//    private IntervalGetter intervalGetter = new DeterminateIntervalGetter(1);
-//    private IntervalGetter reverseIntervalGetter = new DeterminateIntervalGetter(1);
-//    private IntervalGetter intervalGetterParking = new DeterminateIntervalGetter(1);
+    //    Параметры для modeling
+    private GasStation modelingGasStation;
+    private double probability = 1;
+    private double passengerPercent = 1;
+    private IntervalGetter intervalGetter = new DeterminateIntervalGetter(1);
+    private IntervalGetter reverseIntervalGetter = new DeterminateIntervalGetter(1);
+    private IntervalGetter intervalGetterParking = new DeterminateIntervalGetter(1);
 
-//    @FXML
-//    private Pane modeling;
-//    @FXML
-//    private ImageView load_button;
-//    @FXML
-//    private ImageView run_button;
-//    @FXML
-//    private ImageView pause_button;
-//    @FXML
-//    private ImageView stop_button;
-//    @FXML
-//    private ImageView go_button;
-//    @FXML
-//    private ImageView table_button;
-//    @FXML
-//    private Canvas modelTimeCanvas;
+    @FXML
+    private Pane modeling;
+    @FXML
+    private ImageView load_button;
+    @FXML
+    private ImageView run_button;
+    @FXML
+    private ImageView pause_button;
+    @FXML
+    private ImageView stop_button;
+    @FXML
+    private ImageView go_button;
+    @FXML
+    private ImageView table_button;
+    @FXML
+    private Canvas modelTimeCanvas;
 
 
     private GraphicsContext graphicsContextModeling;
@@ -186,7 +186,7 @@ public class ConstructorController {
         graphicsContextModeling.clearRect(0, 0, graphicsContextModeling.getCanvas().getWidth(), graphicsContextModeling.getCanvas().getHeight());
     }
 
-//    private ModelingTimer modelingTimer;
+    //    private ModelingTimer modelingTimer;
     private boolean isStartedModeling = false;
 
     //Обработчики для вкладки конструирования
@@ -198,7 +198,8 @@ public class ConstructorController {
         imageViewEntry.setEffect(null);
         imageViewDeparture.setEffect(null);
         imageViewInfoTable.setEffect(null);
-        imageViewParkingPlace.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(null);
         imageViewLawn.setEffect(null);
     }
 
@@ -210,7 +211,8 @@ public class ConstructorController {
         imageViewEntry.setEffect(null);
         imageViewDeparture.setEffect(null);
         imageViewInfoTable.setEffect(selectedEffect);
-        imageViewParkingPlace.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(null);
         imageViewLawn.setEffect(null);
     }
 
@@ -222,7 +224,8 @@ public class ConstructorController {
         imageViewEntry.setEffect(null);
         imageViewDeparture.setEffect(selectedEffect);
         imageViewInfoTable.setEffect(null);
-        imageViewParkingPlace.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(null);
         imageViewLawn.setEffect(null);
     }
 
@@ -234,7 +237,8 @@ public class ConstructorController {
         imageViewEntry.setEffect(selectedEffect);
         imageViewDeparture.setEffect(null);
         imageViewInfoTable.setEffect(null);
-        imageViewParkingPlace.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(null);
         imageViewLawn.setEffect(null);
     }
 
@@ -246,7 +250,21 @@ public class ConstructorController {
         imageViewEntry.setEffect(null);
         imageViewDeparture.setEffect(null);
         imageViewInfoTable.setEffect(null);
-        imageViewParkingPlace.setEffect(selectedEffect);
+        imageViewGasolinePump.setEffect(selectedEffect);
+        imageViewGasolineTank.setEffect(null);
+        imageViewLawn.setEffect(null);
+    }
+
+    @FXML
+    public void onChooseGasolineTank() {
+        template = Template.GasolineTank;
+        imageViewCashBox.setEffect(null);
+        imageViewRoad.setEffect(null);
+        imageViewEntry.setEffect(null);
+        imageViewDeparture.setEffect(null);
+        imageViewInfoTable.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(selectedEffect);
         imageViewLawn.setEffect(null);
     }
 
@@ -258,7 +276,8 @@ public class ConstructorController {
         imageViewEntry.setEffect(null);
         imageViewDeparture.setEffect(null);
         imageViewInfoTable.setEffect(null);
-        imageViewParkingPlace.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(null);
         imageViewLawn.setEffect(selectedEffect);
     }
 
@@ -270,17 +289,18 @@ public class ConstructorController {
         imageViewEntry.setEffect(null);
         imageViewDeparture.setEffect(null);
         imageViewInfoTable.setEffect(null);
-        imageViewParkingPlace.setEffect(null);
+        imageViewGasolinePump.setEffect(null);
+        imageViewGasolineTank.setEffect(null);
         imageViewLawn.setEffect(null);
     }
 
     @FXML
-    public void onAuthorsClick(){
+    public void onAuthorsClick() {
         try {
             // Загружаем fxml-файл и создаём новую сцену
             // для всплывающего диалогового окна.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("about_us.fxml"));
+            loader.setLocation(getClass().getResource("/forms/about_us.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
             // Создаём диалоговое окно Stage.
             Stage dialogStage = new Stage();
@@ -299,12 +319,12 @@ public class ConstructorController {
     }
 
     @FXML
-    public void onProjectClick(){
+    public void onProjectClick() {
         try {
             // Загружаем fxml-файл и создаём новую сцену
             // для всплывающего диалогового окна.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("about_project.fxml"));
+            loader.setLocation(getClass().getResource("/forms/about_project.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
             // Создаём диалоговое окно Stage.
             Stage dialogStage = new Stage();
@@ -322,51 +342,60 @@ public class ConstructorController {
         }
     }
 
-//    @FXML
-//    public void onConstructorSettingsClick() {
-//        try {
-//            // Загружаем fxml-файл и создаём новую сцену
-//            // для всплывающего диалогового окна.
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(getClass().getResource("constructor_settings.fxml"));
-//            AnchorPane page = (AnchorPane) loader.load();
-//            // Создаём диалоговое окно Stage.
-//            Stage dialogStage = new Stage();
-//            dialogStage.setTitle("Размер парковки");
-//            Scene scene = new Scene(page);
-//            dialogStage.setScene(scene);
-//            // Передаём адресата в контроллер.
-//            ConstructorSettingsController controller = loader.getController();
-//            controller.setInitialWidth(constructorGasStation.getFunctionalBlockH());
-//            controller.setInitialHeight(constructorGasStation.getFunctionalBlockV());
-//            controller.setDialogStage(dialogStage);
-//            dialogStage.initModality(Modality.WINDOW_MODAL);
-//            dialogStage.initOwner(stage);
-//            dialogStage.setResizable(false);
-//            // Отображаем диалоговое окно и ждём, пока пользователь его не закроет
-//            dialogStage.showAndWait();
-//
-//            if (controller.isSubmitClicked()) {
-//                clearConstructorContext();
-//                constructorGasStation = new Parking(controller.getSelectedWidth(), controller.getSelectedHeight(), graphicsContextConstructor, size, constructorGasStation);
-//                constructorGasStation.drawBackground();
-//                constructorGasStation.drawMarkup();
-//                constructorGasStation.drawHighway();
-//                constructorGasStation.drawFunctionalBlocks();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @FXML
+    public void onConstructorSettingsClick() {
+        try {
+            // Загружаем fxml-файл и создаём новую сцену
+            // для всплывающего диалогового окна.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/forms/constructor_settings.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            // Создаём диалоговое окно Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Размер заправки и сервисной зоны");
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+            // Передаём адресата в контроллер.
+            ConstructorSettingsController controller = loader.getController();
+            controller.setInitialParkingWidth(constructorGasStation.getFunctionalBlockH());
+            controller.setInitialParkingHeight(constructorGasStation.getFunctionalBlockV());
+            controller.setInitialServiceHeight(constructorGasStation.getServiceBlockV());
+            controller.setInitialServiceWidth(constructorGasStation.getServiceBlockH());
+            controller.setDialogStage(dialogStage);
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(stage);
+            dialogStage.setResizable(false);
+            // Отображаем диалоговое окно и ждём, пока пользователь его не закроет
+            dialogStage.showAndWait();
+
+            if (controller.isSubmitClicked()) {
+                clearConstructorContext();
+                constructorGasStation = new GasStation(
+                        controller.getGasStationWidth(),
+                        controller.getGasStationHeight(),
+                        controller.getServiceWidth(),
+                        controller.getServiceHeight(),
+                        graphicsContextConstructor,
+                        size,
+                        constructorGasStation);
+                constructorGasStation.drawBackground();
+                constructorGasStation.drawMarkup();
+                constructorGasStation.drawHighway();
+                constructorGasStation.drawFunctionalBlocks();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     public void onConstructorLoad() {
         FileChooser fileChooser = new FileChooser();
-        if (initialDirectory.exists()){
+        if (initialDirectory.exists()) {
             fileChooser.setInitialDirectory(initialDirectory);
         }
         fileChooser.setTitle("Загрузка топологии:");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Файл топологии парковки", "*.top"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Файл топологии АЗС", "*.top"));
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             try (FileInputStream in = new FileInputStream(file.getPath())) {
@@ -375,8 +404,15 @@ public class ConstructorController {
                 constructorGasStation.setGraphicsContext(graphicsContextConstructor);
                 for (int i = 0; i < constructorGasStation.getFunctionalBlockH(); i++) {
                     for (int j = 0; j < constructorGasStation.getFunctionalBlockV(); j++) {
-                        if (constructorGasStation.getFunctionalBlock(i, j) != null) {
-                            constructorGasStation.getFunctionalBlock(i, j).setGraphicsContext(graphicsContextConstructor);
+                        if (constructorGasStation.getGasStationFunctionalBlock(i, j) != null) {
+                            constructorGasStation.getGasStationFunctionalBlock(i, j).setGraphicsContext(graphicsContextConstructor);
+                        }
+                    }
+                }
+                for (int i = 0; i < constructorGasStation.getServiceBlockH(); i++) {
+                    for (int j = 0; j < constructorGasStation.getServiceBlockV(); j++) {
+                        if (constructorGasStation.getServiceAreaFunctionalBlock(i, j) != null) {
+                            constructorGasStation.getServiceAreaFunctionalBlock(i, j).setGraphicsContext(graphicsContextConstructor);
                         }
                     }
                 }
@@ -407,7 +443,7 @@ public class ConstructorController {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("");
                 alert.setHeaderText("");
-                alert.setContentText("Загружаемый файл не содержит топологии парковки!");
+                alert.setContentText("Загружаемый файл не содержит топологии АЗС!");
                 alert.showAndWait();
             }
         }
@@ -416,14 +452,14 @@ public class ConstructorController {
     @FXML
     public void onSave() {
         FileChooser fileChooser = new FileChooser();
-        if (initialDirectory.exists()){
+        if (initialDirectory.exists()) {
             fileChooser.setInitialDirectory(initialDirectory);
-            if (initialFile!=null&&initialFile.exists()){
+            if (initialFile != null && initialFile.exists()) {
                 fileChooser.setInitialFileName(initialFile.getName());
             }
         }
         fileChooser.setTitle("Сохранение топологии:");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Файл топологии парковки", "*.top"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Файл топологии заправки", "*.top"));
         File file = fileChooser.showSaveDialog(stage);
         if (file != null) {
             try (FileOutputStream out = new FileOutputStream(file.getPath())) {
@@ -439,72 +475,83 @@ public class ConstructorController {
         }
     }
 
-//    private String getErrorMessage(Parking parking) {
-//        ArrayList<VerificatorError> errorList = Verificator.checkAll(parking);
-//        if (errorList.size() == 0)
-//            return null;
-//        else {
-//            StringBuilder message = new StringBuilder();
-//            if (errorList.contains(VerificatorError.hasNoCashBox)) {
-//                message.append("\n - На парковке должна быть касса.");
-//            }
-//            if (errorList.contains(VerificatorError.hasNoInfoTable)) {
-//                message.append("\n - На парковке должно быть информационное табло.");
-//            }
-//            if (errorList.contains(VerificatorError.IncorrectEntryDeparturePlacement)) {
-//                message.append("\n - Въезд и выезд должны прилегать к шоссе. Выезд должен находиться дальше по ходу движения автомобилей по шоссе.");
-//            }
-//            if (errorList.contains(VerificatorError.UnrelatedGraph)) {
-//                message.append("\n - Требуется наличие пути от въезда до всех парковочных мест и дорог.");
-//            }
-//            return message.toString();
-//        }
-//    }
+    private String getErrorMessage(GasStation gasStation) {
+        ArrayList<VerificatorError> errorList = Verificator.checkAll(gasStation);
+        if (errorList.size() == 0)
+            return null;
+        else {
+            StringBuilder message = new StringBuilder();
+            if (errorList.contains(VerificatorError.hasNoCashBox)) {
+                message.append("\n - На АЗС должна быть касса.");
+            }
+            if (errorList.contains(VerificatorError.hasNoInfoTable)) {
+                message.append("\n - На АЗС должно быть информационное табло.");
+            }
+            if (errorList.contains(VerificatorError.IncorrectGasStationEntryDeparturePlacement)) {
+                message.append("\n - Въезд и выезд на АЗС должны прилегать к шоссе. Выезд должен находиться правее въезда.");
+            }
+            if (errorList.contains(VerificatorError.IncorrectServiceAreaEntryDeparturePlacement)) {
+                message.append("\n - Въезд и выезд в сервисную зону должны прилегать к шоссе. Выезд должен находиться правее въезда.");
+            }
+            if (errorList.contains(VerificatorError.UnrelatedGasStationGraph)) {
+                message.append("\n - На АЗС требуется наличие пути от въезда до всех дорог и бензоколонок.");
+            }
+            if (errorList.contains(VerificatorError.UnrelatedServiceAreaGraph)) {
+                message.append("\n - В сервисной зоне требуется наличие пути от въезда до всех дорог и баков с бензином.");
+            }
+            return message.toString();
+        }
+    }
 
-//    @FXML
-//    public void onCheck() {
-//        String message = getErrorMessage(constructorGasStation);
-//        if (message == null) {
-//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//            alert.setTitle("");
-//            alert.setHeaderText("");
-//            alert.setContentText("Топология соответствует правилам организации парковки!");
-//            alert.showAndWait();
-//        } else {
-//            Alert alert = new Alert(Alert.AlertType.WARNING);
-//            alert.setTitle("");
-//            alert.setHeaderText("");
-//            alert.setContentText("Топология не соответствует правилам организации парковки: " + message);
-//            alert.showAndWait();
-//        }
-//    }
+    @FXML
+    public void onCheck() {
+        String message = getErrorMessage(constructorGasStation);
+        if (message == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("");
+            alert.setHeaderText("");
+            alert.setContentText("Топология соответствует правилам организации АЗС!");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("");
+            alert.setHeaderText("");
+            alert.setContentText("Топология не соответствует правилам организации АЗС: " + message);
+            alert.showAndWait();
+        }
+    }
 
-//    @FXML
-//    public void onGoToModeling() {
-//        String message = getErrorMessage(constructorGasStation);
-//        if (message == null) {
-//            modelingParking = new Parking(constructorGasStation.getFunctionalBlockH(), constructorGasStation.getFunctionalBlockV(), graphicsContextModeling, size, constructorGasStation);
-//            clearModelingContext();
-//            modelingParking.drawBackground();
-//            modelingParking.drawFunctionalBlocksInModeling();
-//            modelingParking.drawHighwayInModeling();
-//            run_button.setDisable(false);
-//            run_button.setImage(new Image("play_icon.png"));
-//            pause_button.setDisable(true);
-//            pause_button.setImage(new Image("pause_icon_disabled.png"));
-//            stop_button.setDisable(true);
-//            stop_button.setImage(new Image("stop_icon_disabled.png"));
-//            SingleSelectionModel<Tab> singleSelectionModel = tabPane.getSelectionModel();
-//            singleSelectionModel.select(1);
-//        } else {
-//            Alert alert = new Alert(Alert.AlertType.WARNING);
-//            alert.setTitle("");
-//            alert.setHeaderText("");
-//            alert.setContentText("Топология не соответствует правилам организации парковки: " + message);
-//            alert.showAndWait();
-//        }
-//
-//    }
+    @FXML
+    public void onGoToModeling() {
+        String message = getErrorMessage(constructorGasStation);
+        if (message == null) {
+            modelingGasStation = new GasStation(constructorGasStation.getFunctionalBlockH(),
+                    constructorGasStation.getFunctionalBlockV(),
+                    constructorGasStation.getServiceBlockH(),
+                    constructorGasStation.getServiceBlockV(),
+                    graphicsContextModeling,
+                    size,
+                    constructorGasStation);
+            clearModelingContext();
+            modelingGasStation.drawBackground();
+            modelingGasStation.drawFunctionalBlocksInModeling();
+            modelingGasStation.drawHighwayInModeling();
+            run_button.setDisable(false);
+            run_button.setImage(new Image("pictures/play_icon.png"));
+            pause_button.setDisable(true);
+            pause_button.setImage(new Image("pictures/pause_icon_disabled.png"));
+            stop_button.setDisable(true);
+            stop_button.setImage(new Image("pictures/stop_icon_disabled.png"));
+            SingleSelectionModel<Tab> singleSelectionModel = tabPane.getSelectionModel();
+            singleSelectionModel.select(1);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("");
+            alert.setHeaderText("");
+            alert.setContentText("Топология не соответствует правилам организации АЗС: " + message);
+            alert.showAndWait();
+        }
+    }
 
     //Обработчики для вкладки моделирования
 
@@ -588,7 +635,7 @@ public class ConstructorController {
 //
 //                    private ArrayList<Car> cars = new ArrayList<>();
 //                    private ArrayList<PathTransition> transitions = new ArrayList<>();
-//                    private Graph graph = new Graph(modelingParking);
+//                    private GasStationGraph graph = new GasStationGraph(modelingParking);
 //
 //                    private Random random = new Random();
 //                    private Time modelTime = new Time();
@@ -596,8 +643,8 @@ public class ConstructorController {
 //                    private long timeTick;
 //
 //                    {
-//                        graph.fillFreeParkingPlaces();
-//                        modelingParking.drawInfoTableInModeling(graph.getFreeParkingPlaces().size());
+//                        graph.fillFreeGasolinePumps();
+//                        modelingParking.drawInfoTableInModeling(graph.getFreeGasolinePumps().size());
 //                        modelingParking.drawParkingNumbers();
 //                    }
 //
@@ -702,7 +749,7 @@ public class ConstructorController {
 //                        // Путь от въезда до парковочного места
 //
 //                        car2.setParkingPlace(graph.getFreeParkingPlace());
-//                        modelingParking.drawInfoTableInModeling(graph.getFreeParkingPlaces().size());
+//                        modelingParking.drawInfoTableInModeling(graph.getFreeGasolinePumps().size());
 //                        for (Node step : car2.getPathToEntry()
 //                                ) {
 //                            pathNext.getElements().add(new LineTo(step.getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25,
@@ -753,7 +800,7 @@ public class ConstructorController {
 //
 //                                pathTransitionFromParkingPlace.setOnFinished(event3 -> {
 //                                    graph.freeParkingPlace(car_car_car.getParkingPlace());
-//                                    modelingParking.drawInfoTableInModeling(graph.getFreeParkingPlaces().size());
+//                                    modelingParking.drawInfoTableInModeling(graph.getFreeGasolinePumps().size());
 //                                    PathTransition turn = (PathTransition) event3.getSource();
 //                                    Car car1 = (Car) turn.getNode();
 //                                    PathTransition pathTransitionToEnd = new PathTransition();
@@ -763,7 +810,7 @@ public class ConstructorController {
 //                                    statisticController.addRecord(new Record(((ParkingPlace)modelingParking.getParking()[car1.getParkingPlace().getI()][car1.getParkingPlace().getJ()]).getNumber(), car1.getType(), car1.getRate() * parkingTime/60,  car1.getArrivalTime(), car1.getDepartureTime()));
 //                                    //Поворот на шоссе
 //
-//                                    pathToEnd.getElements().add(new MoveTo(modelingParking.getDepartureI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25, modelingParking.getDepartureJ() * size + modelingParking.getVERTICAL_MARGIN() + 25));
+//                                    pathToEnd.getElements().add(new MoveTo(modelingParking.getGasStationDepartureI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25, modelingParking.getGasStationDepartureJ() * size + modelingParking.getVERTICAL_MARGIN() + 25));
 //                                        /*CubicCurveTo cubicTo1 = new CubicCurveTo();
 //                                        cubicTo1.setControlX1(graph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25);
 //                                        cubicTo1.setControlY1(graph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 65);
@@ -771,7 +818,7 @@ public class ConstructorController {
 //                                        cubicTo1.setControlY2(graph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 75);
 //                                        cubicTo1.setX(graph.getDeparture().getI() * size + modelingParking.getHORIZONTAL_MARGIN() + 75);
 //                                        cubicTo1.setY(graph.getDeparture().getJ() * size + modelingParking.getVERTICAL_MARGIN() + 75);*/
-//                                    pathToEnd.getElements().add(new LineTo(modelingParking.getDepartureI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25, (modelingParking.getDepartureJ() + 1) * size + modelingParking.getVERTICAL_MARGIN() + 25));
+//                                    pathToEnd.getElements().add(new LineTo(modelingParking.getGasStationDepartureI() * size + modelingParking.getHORIZONTAL_MARGIN() + 25, (modelingParking.getGasStationDepartureJ() + 1) * size + modelingParking.getVERTICAL_MARGIN() + 25));
 //
 //                                    //Путь до конца
 //
@@ -813,7 +860,7 @@ public class ConstructorController {
 //                            cars.remove(car_car);
 //                            modeling.getChildren().remove(car_car);
 //                        }));
-//                        pathNextTransition.setDuration(Duration.millis(modelingParking.getHORIZONTAL_MARGIN() / size * 500 + (modelingParking.getFunctionalBlockH() + 1 - modelingParking.getEntryI()) * 500));
+//                        pathNextTransition.setDuration(Duration.millis(modelingParking.getHORIZONTAL_MARGIN() / size * 500 + (modelingParking.getFunctionalBlockH() + 1 - modelingParking.getGasStationEntryI()) * 500));
 //                    }
 //                    pathNextTransition.setPath(pathNext);
 //                    pathNextTransition.setNode(car2);
@@ -963,8 +1010,8 @@ public class ConstructorController {
 //                dialogStage.setScene(scene);
 //                // Передаём адресата в контроллер.
 //                ModelingCarSettingsController controller = loader.getController();
-//                //controller.setInitialWidth(constructorGasStation.getFunctionalBlockH());
-//                //controller.setInitialHeight(constructorGasStation.getFunctionalBlockV());
+//                //controller.setInitialParkingWidth(constructorGasStation.getFunctionalBlockH());
+//                //controller.setInitialParkingHeight(constructorGasStation.getFunctionalBlockV());
 //                controller.setDialogStage(dialogStage);
 //                dialogStage.initModality(Modality.WINDOW_MODAL);
 //                dialogStage.initOwner(stage);
@@ -1005,8 +1052,8 @@ public class ConstructorController {
 //                dialogStage.setScene(scene);
 //                // Передаём адресата в контроллер.
 //                ModelingParkingSettingsController controller = loader.getController();
-//                //controller.setInitialWidth(constructorGasStation.getFunctionalBlockH());
-//                //controller.setInitialHeight(constructorGasStation.getFunctionalBlockV());
+//                //controller.setInitialParkingWidth(constructorGasStation.getFunctionalBlockH());
+//                //controller.setInitialParkingHeight(constructorGasStation.getFunctionalBlockV());
 //                controller.setDialogStage(dialogStage);
 //                dialogStage.initModality(Modality.WINDOW_MODAL);
 //                dialogStage.initOwner(stage);

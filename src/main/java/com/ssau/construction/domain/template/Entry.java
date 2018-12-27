@@ -10,7 +10,7 @@ public class Entry extends FunctionalBlock {
     }
 
     public void render(double x, double y, int size) {
-        String imagePath = "entry.png";
+        String imagePath = "pictures/entry.png";
         Image image = new Image(imagePath);
         graphicsContext.drawImage(image, x, y, size, size);
     }

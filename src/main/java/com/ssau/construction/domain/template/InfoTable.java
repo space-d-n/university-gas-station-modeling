@@ -10,13 +10,13 @@ public class InfoTable extends FunctionalBlock {
     public InfoTable(GraphicsContext graphicsContext){ super(graphicsContext);}
 
     public void render(double x, double y, int size) {
-        String imagePath = "infoTable.png";
+        String imagePath = "pictures/infoTable.png";
         Image image = new Image(imagePath);
         graphicsContext.drawImage(image, x, y, size, size);
     }
 
     public void renderInModeling(double x, double y, int size, int count){
-        String imagePath = "road.jpg";
+        String imagePath = "pictures/road.jpg";
         Image image = new Image(imagePath);
         graphicsContext.drawImage(image, x, y, size, size);
         graphicsContext.setFill(Color.web("#e59711"));

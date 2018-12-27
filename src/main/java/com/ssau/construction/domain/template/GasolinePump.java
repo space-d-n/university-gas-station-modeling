@@ -10,7 +10,7 @@ public class GasolinePump extends FunctionalBlock {
     public GasolinePump (GraphicsContext graphicsContext){super(graphicsContext);}
 
     public void render(double x, double y, int size) {
-        String imagePath = "gasoline_pump.png";
+        String imagePath = "pictures/gasoline_pump.png";
         Image image = new Image(imagePath);
         graphicsContext.drawImage(image, x, y, size, size);
     }
