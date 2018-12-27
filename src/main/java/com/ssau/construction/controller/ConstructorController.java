@@ -22,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -39,6 +40,25 @@ import java.util.Random;
 public class ConstructorController {
 
     public static final int DISTANCE_BETWEEN = 50;
+
+    private static double petrolAmountTotal = 1000;
+    private static double moneyAmount = 0;
+
+    public static double getMoneyAmount() {
+        return moneyAmount;
+    }
+
+    public static void setMoneyAmount(double moneyAmount) {
+        ConstructorController.moneyAmount = moneyAmount;
+    }
+
+    public static double getPetrolAmountTotal() {
+        return petrolAmountTotal;
+    }
+
+    public static void setPetrolAmountTotal(double petrolAmountTotal) {
+        ConstructorController.petrolAmountTotal = petrolAmountTotal;
+    }
 
     //Общие параметры
     @FXML
@@ -677,6 +697,12 @@ public class ConstructorController {
             time = now - lastHighway;
             timeTick = now - lastTimeTick;
 
+            graphicsContextModeling.setFill(Paint.valueOf("#ffcc66"));
+            graphicsContextModeling.fillRect(0, 0, 200, 75);
+            graphicsContextModeling.setFill(Paint.valueOf("#000000"));
+            graphicsContextModeling.fillText("Топливо (л): " + getPetrolAmountTotal(), 25, 25);
+            graphicsContextModeling.fillText("Деньги (у.е.): " + getMoneyAmount(), 25, 50);
+
             if (now - lastTimeTick > 1_000_000_000L) {
                 modelTime.inc();
                 lastTimeTick = now;
@@ -741,7 +767,7 @@ public class ConstructorController {
 
                     pathTransition.setOnFinished(event -> {
                         PathTransition pathTransitionToEntry = (PathTransition) event.getSource();
-                        Car car2 = (Car) pathTransitionToEntry.getNode();
+                        Car car2 = (Passenger) pathTransitionToEntry.getNode();
                         PathTransition pathNextTransition = new PathTransition();
                         transitions.remove(pathTransitionToEntry);
                         transitions.add(pathNextTransition);
@@ -749,8 +775,8 @@ public class ConstructorController {
                         pathNext.getElements().add(new MoveTo(gasStationGraph.getEntry().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() - 25,
                                 modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + modelingGasStation.getFunctionalBlockV() * size + 25));
 
-                        if (random.nextDouble() < probability && gasStationGraph.hasFreeGasolinePumps()) {
-
+                        if (random.nextDouble() < probability && ((Passenger) car2).getPetrolAmount() < 25
+                                && getPetrolAmountTotal() > (50 - ((Passenger) car2).getPetrolAmount()) && gasStationGraph.hasFreeGasolinePumps()) {
 
                             //Поворот на парковку
 
@@ -809,6 +835,16 @@ public class ConstructorController {
 
                                     pathToDeparture.getElements().add(new MoveTo(car_car_car.getGasolinePumpNode().getI() * size + modelingGasStation.getHORIZONTAL_MARGIN() + 25,
                                             car_car_car.getGasolinePumpNode().getJ() * size + modelingGasStation.getGAS_STATION_VERTICAL_MARGIN_TOP() + 25));
+
+                                    setPetrolAmountTotal(petrolAmountTotal - (50 - ((Passenger) car2).getPetrolAmount()));
+                                    setMoneyAmount(getMoneyAmount() + 1);
+                                    graphicsContextModeling.setFill(Paint.valueOf("#ffcc66"));
+                                    graphicsContextModeling.fillRect(0, 0, 200, 75);
+                                    graphicsContextModeling.setFill(Paint.valueOf("#000000"));
+                                    graphicsContextModeling.fillText("Топливо (л): " + getPetrolAmountTotal(), 25, 25);
+                                    graphicsContextModeling.fillText("Деньги (у.е.): " + getMoneyAmount(), 25, 50);
+
+                                    ((Passenger) car2).setPetrolAmount(50);
 
                                     //Путь от парковочного места до выезда
 

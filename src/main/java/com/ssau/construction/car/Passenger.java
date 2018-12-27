@@ -8,6 +8,7 @@ public class Passenger extends Car {
 
     private static final int width = 32;
     private static final int height = 17;
+    private double petrolAmount;
     private static double rate = 200;
     private static ArrayList<String> cars = new ArrayList<>();
     private static Random random = new Random();
@@ -18,6 +19,15 @@ public class Passenger extends Car {
 
     public Passenger(double x, double y) {
         super(x, y, cars.get(random.nextInt(cars.size())), width, height);
+        this.petrolAmount = random.nextInt(50);
+    }
+
+    public double getPetrolAmount() {
+        return petrolAmount;
+    }
+
+    public void setPetrolAmount(double petrolAmount) {
+        this.petrolAmount = petrolAmount;
     }
 
     public static void setRate(double rate) {
