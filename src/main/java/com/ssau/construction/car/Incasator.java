@@ -4,25 +4,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Cargo extends Car {
+public class Incasator extends Car {
 
-    private static final int width = 50;
-    private static final int height = 25;
-    private static double rate = 300;
+    private static final int width = 32;
+    private static final int height = 17;
+    private static double rate = 200;
+    private static ArrayList<String> cars = new ArrayList<>();
     private static Random random = new Random();
 
-    private static ArrayList<String> cars = new ArrayList<>();
-
     static {
-        cars.addAll(Arrays.asList("pictures/cargo1.png"));
+        cars.addAll(Arrays.asList("pictures/incasator.png"));
     }
 
-    public Cargo(double x, double y) {
+    public Incasator(double x, double y) {
         super(x, y, cars.get(random.nextInt(cars.size())), width, height);
     }
 
     public static void setRate(double rate) {
-        Cargo.rate = rate;
+        Incasator.rate = rate;
     }
 
     @Override
@@ -32,6 +31,6 @@ public class Cargo extends Car {
 
     @Override
     public String getType() {
-        return "Грузовой";
+        return "Инкасатор";
     }
 }

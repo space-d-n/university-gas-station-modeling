@@ -190,14 +190,9 @@
                                                 <Pane fx:id="modeling" BorderPane.alignment="CENTER" />
                                             </center>
                                             <top>
-                                                <GridPane maxWidth="450.0" prefHeight="50.0" prefWidth="403.0" BorderPane.alignment="TOP_LEFT">
+                                                <GridPane maxWidth="450.0" prefHeight="50.0" prefWidth="165.0" BorderPane.alignment="TOP_LEFT">
                                                     <columnConstraints>
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="52.0" minWidth="0.0" percentWidth="25.0" prefWidth="51.0" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="0.0" percentWidth="25.0" prefWidth="42.0" />
                                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="0.0" percentWidth="25.0" prefWidth="105.0" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="756.0" minWidth="10.0" percentWidth="25.0" prefWidth="105.0" />
                                                     </columnConstraints>
                                                     <rowConstraints>
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -206,34 +201,9 @@
                                                         <Insets left="5.0" />
                                                     </BorderPane.margin>
                                                     <children>
-                                                        <ImageView fx:id="load_button" fitHeight="55.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../pictures/load_icon2.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fitHeight="47.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                                                            <image>
-                                                                <Image url="@../pictures/trafic_settings.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" onMouseClicked="#onStartModeling" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                                                        <ImageView fx:id="run_button" disable="true" fitHeight="48.0" fitWidth="60.0" onMouseClicked="#onStartModeling" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../pictures/play_icon_disabled.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fx:id="pause_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
-                                                            <image>
-                                                                <Image url="@../pictures/pause_icon_disabled.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fx:id="stop_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
-                                                            <image>
-                                                                <Image url="@../pictures/stop_icon_disabled.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fx:id="table_button" disable="true" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5">
-                                                            <image>
-                                                                <Image url="@../pictures/table_icon_disabled.png" />
                                                             </image>
                                                         </ImageView>
                                                     </children>
